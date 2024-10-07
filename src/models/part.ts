@@ -71,7 +71,7 @@ Part.init(
     },
     postedAT: {
       type: DataTypes.DATE,
-      defaultValue: Date.now,
+      defaultValue: DataTypes.NOW,
     },
   },
   {

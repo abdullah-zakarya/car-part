@@ -5,14 +5,24 @@ import {
   InferCreationAttributes,
   CreationOptional,
 } from "sequelize";
-import sequelize from "./../../config/database";
+import sequelize from "../../config/database";
 
+enum Role {
+  user = "user",
+  amdin = "admin",
+}
+enum Gender {
+  male = "male",
+  female = "female",
+}
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;
   declare name: string;
   declare email: string;
   declare password: string;
-  declare createdAt: Date;
+  declare createdAt: CreationOptional<Date>;
+  declare role: CreationOptional<Role>;
+  declare gender: Gender;
 }
 
 User.init(
@@ -29,7 +39,6 @@ User.init(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     password: {
       type: DataTypes.STRING,
@@ -37,13 +46,28 @@ User.init(
     },
     createdAt: {
       type: DataTypes.DATE,
-      default: Date.now,
+      defaultValue: Date.now,
+    },
+    role: {
+      type: DataTypes.ENUM("user", "admin"),
+      defaultValue: "user",
+    },
+    gender: {
+      type: DataTypes.ENUM("male", "female"),
+      allowNull: true,
     },
   },
+
   {
     sequelize,
     tableName: "users",
     timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ["email"],
+      },
+    ],
   }
 );
 
