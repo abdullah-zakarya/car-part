@@ -7,23 +7,25 @@ import {
 } from "sequelize";
 import sequelize from "../../config/database";
 
-enum ShipmentStatus {
-  STOCK = "stock",
-  SHIPPING = "shipping",
-  DONE = "done",
+enum ServerStatus {
+  inqueue = "inqueue",
+  processing = "processing",
+  done = "done",
 }
-
-class Sale extends Model<InferAttributes<Sale>, InferCreationAttributes<Sale>> {
+class Server extends Model<
+  InferAttributes<Server>,
+  InferCreationAttributes<Server>
+> {
   declare id: CreationOptional<number>;
   declare customerId: number;
-  declare partId: number;
-  declare shipment: string;
-  declare status: ShipmentStatus;
+  declare serverType: string;
+  declare location: string;
   declare paymentMethod: string;
   declare createdAt: CreationOptional<Date>;
+  declare status: ServerStatus;
 }
 
-Sale.init(
+Server.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -35,16 +37,16 @@ Sale.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    partId: {
-      type: DataTypes.INTEGER,
+    serverType: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    shipment: {
+    location: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM(...Object.values(ShipmentStatus)),
+      type: DataTypes.ENUM(...Object.values(ServerStatus)),
       allowNull: false,
     },
     paymentMethod: {
@@ -59,8 +61,7 @@ Sale.init(
   {
     sequelize,
     timestamps: true,
-    indexes: [{ fields: ["customerId"] }, { fields: ["partId"] }],
   }
 );
 
-export default Sale;
+export default Server;
