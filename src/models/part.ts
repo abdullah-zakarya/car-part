@@ -5,7 +5,7 @@ import {
   InferCreationAttributes,
   CreationOptional,
 } from "sequelize";
-import sequelize from "./../../config/database";
+import sequelize from "../../config/database";
 import User from "./User";
 class Part extends Model<InferAttributes<Part>, InferCreationAttributes<Part>> {
   declare id: CreationOptional<number>; // like 1

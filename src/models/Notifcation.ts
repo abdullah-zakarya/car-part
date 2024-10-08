@@ -1,11 +1,10 @@
 import {
   InferCreationAttributes,
   InferAttributes,
-  CreationOptional,
   Model,
   DataTypes,
-} from "sequelize";
-import sequelize from "../../config/database";
+} from 'sequelize';
+import sequelize from '../../config/database';
 
 class Notifcation extends Model<
   InferAttributes<Notifcation>,
@@ -34,3 +33,5 @@ Notifcation.init(
     sequelize,
   }
 );
+
+export default Notifcation;
