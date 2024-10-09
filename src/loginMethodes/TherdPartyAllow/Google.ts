@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { OAuthArgu } from '../../../../../types';
+import { OAuthArgu } from '../../../types';
 import OAuthProvider from './OAuthProvider';
 
 class GoogleOAuth extends OAuthProvider {

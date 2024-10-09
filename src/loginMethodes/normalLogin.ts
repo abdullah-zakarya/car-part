@@ -1,6 +1,6 @@
 import ILoginMethod from './ILoginMethod';
-import User from '../../../models/User';
-import AppError from '../../../../utils/AppError';
+import User from '../models/User';
+import AppError from '../../utils/AppError';
 import bcrypt from 'bcrypt';
 
 export default class NormalLogin implements ILoginMethod {
@@ -11,7 +11,9 @@ export default class NormalLogin implements ILoginMethod {
 
   async login(obj: { email: string; password: string }): Promise<User> {
     const user = await User.findOne({ where: { email: obj.email } });
-    if (!user || !(await bcrypt.compare(obj.password, user.password))) {
+    const compare = await bcrypt.compare(obj.password, user!.password);
+    console.log(user?.password, compare);
+    if (!user || user.password || compare) {
       throw new AppError('Invalid credentials');
     }
     return user;

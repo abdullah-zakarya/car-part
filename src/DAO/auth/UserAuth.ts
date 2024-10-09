@@ -1,20 +1,20 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 // import User from "./../models/User"; // Assuming you have a User model
-import ILoginMethod from './loginMethodes/ILoginMethod';
+import ILoginMethod from '../../loginMethodes/ILoginMethod';
 import User from '../../models/User';
-import NormalLogin from './loginMethodes/normalLogin';
-import GoogleOAuth from './loginMethodes/TherdPartyAllow/GoogleOAuth';
+import NormalLogin from '../../loginMethodes/normalLogin';
+import GoogleOAuth from '../../loginMethodes/TherdPartyAllow/Google';
 import AppError from '../../../utils/AppError';
 import EmailSend from '../../../utils/EmailSender';
-import ResetCode from '../../models/resetCode';
+import ResetCode from '../../models/ResetCode';
 import { Op } from 'sequelize';
 import { promisify } from 'util';
 class UserAuth {
-  private loginMethod(mathod: string): ILoginMethod {
-    if (mathod === 'normal') return new NormalLogin();
-    if (mathod === 'google') return new GoogleOAuth();
-    throw new AppError('this method is not exist yet');
+  private loginMethod(method: string): ILoginMethod {
+    if (method === 'normal') return new NormalLogin();
+    if (method === 'google') return new GoogleOAuth();
+    throw new AppError('this method does not exist yet');
   }
 
   // Allow specific fields only (for security purposes)
@@ -27,7 +27,7 @@ class UserAuth {
   }
 
   // Create JWT Token
-  createToken(userId: number): string {
+  private createToken(userId: number): string {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET!, {
       expiresIn: '3D',
     });
@@ -45,10 +45,14 @@ class UserAuth {
   }
 
   // Login
-  async login(method: string, info: {}): Promise<User> {
+  async login(
+    method: string,
+    info: {}
+  ): Promise<{ token: string; user: User }> {
     const loginMthod = this.loginMethod(method);
-    const user = await loginMthod.signup(info);
-    return user;
+    const user = await loginMthod.login(info);
+    const token = this.createToken(user.id);
+    return { token, user };
   }
 
   // Forgot Password
@@ -90,15 +94,14 @@ class UserAuth {
 
   // Get User Information
   async showMe(id: number): Promise<User> {
-    const user = await User.findByPk(id, {
-      attributes: { exclude: ['password'] },
-    });
+    // option = {attributes: { exclude: ['password'] },}
+    const user = await User.findByPk(id);
     return user!;
   }
 
   async isLogin(token: string): Promise<number> {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-    return 12;
+    const decoded = Object(jwt.verify(token, process.env.JWT_SECRET as string));
+    return Number(decoded.id!);
   }
 
   // Delete User
