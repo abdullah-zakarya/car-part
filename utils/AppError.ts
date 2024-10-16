@@ -1,5 +1,5 @@
 export default class AppError extends Error {
-  constructor(msg: string) {
+  constructor(msg: string, public statusCode?: number) {
     super(msg);
     console.log(this.message);
   }

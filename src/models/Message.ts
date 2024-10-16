@@ -4,12 +4,12 @@ import {
   CreationOptional,
   Model,
   DataTypes,
-} from "sequelize";
-import sequelize from "../../config/database";
+} from 'sequelize';
+import sequelize from '../../config/database';
 
-class Notification extends Model<
-  InferAttributes<Notification>,
-  InferCreationAttributes<Notification>
+class Message extends Model<
+  InferAttributes<Message>,
+  InferCreationAttributes<Message>
 > {
   declare senderId: number;
   declare receiverId: number;
@@ -18,7 +18,7 @@ class Notification extends Model<
   declare isRead: CreationOptional<boolean>;
 }
 
-Notification.init(
+Message.init(
   {
     senderId: {
       type: DataTypes.INTEGER,
@@ -43,9 +43,9 @@ Notification.init(
   },
   {
     sequelize,
-    indexes: [{ fields: ["senderId", "receiverId"] }, { fields: ["time"] }],
+    indexes: [{ fields: ['senderId', 'receiverId'] }, { fields: ['time'] }],
     timestamps: true,
   }
 );
 
-export default Notification;
+export default Message;

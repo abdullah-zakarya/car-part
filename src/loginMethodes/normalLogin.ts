@@ -6,15 +6,19 @@ import bcrypt from 'bcrypt';
 export default class NormalLogin implements ILoginMethod {
   private async encryptPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, salt);
+    return bcrypt.hash(password, salt);
   }
 
-  async login(obj: { email: string; password: string }): Promise<User> {
-    const user = await User.findOne({ where: { email: obj.email } });
-    const compare = await bcrypt.compare(obj.password, user!.password);
-    console.log(user?.password, compare);
-    if (!user || user.password || compare) {
-      throw new AppError('Invalid credentials');
+  async login({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<User> {
+    const user = await User.findOne({ where: { email } });
+    if (!user || !(await bcrypt.compare(user.password, password))) {
+      throw new AppError('Invalid credentials', 403);
     }
     return user;
   }
@@ -25,8 +29,9 @@ export default class NormalLogin implements ILoginMethod {
     if (!newUser) throw new AppError('Failed to create user');
     return newUser;
   }
-  async updatePassword(id: number, newPassword: string) {
-    const password = await this.encryptPassword(newPassword);
-    User.update({ password }, { where: { id } });
+
+  async updatePassword(id: number, newPassword: string): Promise<void> {
+    const hashedPassword = await this.encryptPassword(newPassword);
+    await User.update({ password: hashedPassword }, { where: { id } });
   }
 }

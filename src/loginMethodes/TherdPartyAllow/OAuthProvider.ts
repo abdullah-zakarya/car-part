@@ -1,7 +1,7 @@
 import ILoginMethod from '../ILoginMethod';
 import User from '../../models/User'; // Assume a User model for the database
 import AppError from '../../../utils/AppError';
-import { OAuthArgu } from '../../../types';
+import { OAuthArgu } from '../../../types/types';
 
 abstract class OAuthProvider implements ILoginMethod {
   protected abstract getAccessToken(obj: OAuthArgu): Promise<string>;

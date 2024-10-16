@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-// import User from "./../models/User"; // Assuming you have a User model
 import ILoginMethod from '../../loginMethodes/ILoginMethod';
 import User from '../../models/User';
 import NormalLogin from '../../loginMethodes/normalLogin';
@@ -10,15 +9,23 @@ import EmailSend from '../../../utils/EmailSender';
 import ResetCode from '../../models/ResetCode';
 import { Op } from 'sequelize';
 import { promisify } from 'util';
+
 class UserAuth {
-  private loginMethod(method: string): ILoginMethod {
-    if (method === 'normal') return new NormalLogin();
-    if (method === 'google') return new GoogleOAuth();
-    throw new AppError('this method does not exist yet');
+  private static LOGIN_METHODS: Record<string, new () => ILoginMethod> = {
+    normal: NormalLogin,
+    google: GoogleOAuth,
+  };
+
+  private getLoginMethod(method: string): ILoginMethod {
+    const LoginMethod = UserAuth.LOGIN_METHODS[method];
+    if (!LoginMethod) throw new AppError('This method does not exist yet');
+    return new LoginMethod();
   }
 
-  // Allow specific fields only (for security purposes)
-  private allowsField(obj: { [key: string]: any }, fields: string[]): object {
+  private allowsField(
+    obj: { [key: string]: any },
+    fields: string[]
+  ): { [key: string]: any } {
     const result: { [key: string]: any } = {};
     for (const field of fields) {
       result[field] = obj[field];
@@ -26,88 +33,94 @@ class UserAuth {
     return result;
   }
 
-  // Create JWT Token
   private createToken(userId: number): string {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET!, {
-      expiresIn: '3D',
+      expiresIn: '3d',
     });
   }
 
-  // Signup
   async signup(
     method: string,
     info: {}
   ): Promise<{ user: User; token: string }> {
-    const loginMthod = this.loginMethod(method);
-    const user = await loginMthod.signup(info);
+    const loginMethod = this.getLoginMethod(method);
+    const user = await loginMethod.signup(info);
     const token = this.createToken(user.id);
     return { user, token };
   }
 
-  // Login
   async login(
     method: string,
     info: {}
   ): Promise<{ token: string; user: User }> {
-    const loginMthod = this.loginMethod(method);
-    const user = await loginMthod.login(info);
+    const loginMethod = this.getLoginMethod(method);
+    const user = await loginMethod.login(info);
     const token = this.createToken(user.id);
     return { token, user };
   }
 
-  // Forgot Password
   async forgotPassword(email: string): Promise<void> {
     const user = await User.findOne({ where: { email } });
-    if (!user) new AppError('this user is not exist ');
+    if (!user) throw new AppError('This user does not exist');
+
     const resetCode = String(Math.floor(1000 + Math.random() * 9000));
-    const text = resetCode + ' is the key to rest your password';
+    const text = `${resetCode} is the key to reset your password.`;
+
     await ResetCode.destroy({ where: { email } });
     const expiredAt = new Date(Date.now() + 10 * 60 * 1000);
     await ResetCode.create({ email, code: resetCode, expiredAt });
+
     new EmailSend({ from: 'car-part', text, to: email });
   }
 
-  // Reset Password
-  async resetPassword(obj: {
+  async resetPassword({
+    email,
+    resetCode,
+    newPassword,
+  }: {
     email: string;
     resetCode: string;
     newPassword: string;
   }): Promise<string> {
-    const { email, resetCode, newPassword } = obj;
-    const restCode = await ResetCode.findOne({
-      where: { email, code: resetCode, expiredAt: { [Op.lt]: Date.now() } },
+    const validResetCode = await ResetCode.findOne({
+      where: {
+        email,
+        code: resetCode,
+        expiredAt: { [Op.lte]: Date.now() + 10 * 60 * 1000 },
+      },
     });
-    if (!resetCode) new AppError('this reset code is not exsit or expired');
+
+    if (!validResetCode)
+      throw new AppError('This reset code does not exist or is expired');
+
     const user = await User.findOne({ where: { email } });
-    const password = new NormalLogin().updatePassword(user!.id, newPassword);
+    await new NormalLogin().updatePassword(user!.id, newPassword);
+
     return this.createToken(user!.id);
   }
 
-  // Update User Information
   async updateMe(userId: number, updatedFields: object): Promise<User> {
     const fieldsToUpdate = this.allowsField(updatedFields, ['name', 'email']);
     const user = await User.findByPk(userId);
-    user?.update(fieldsToUpdate);
-    user?.save();
-    return user!; // Assuming `User.update` is a method that updates the user in DB
+    await user?.update(fieldsToUpdate);
+    return user!;
   }
 
-  // Get User Information
   async showMe(id: number): Promise<User> {
-    // option = {attributes: { exclude: ['password'] },}
     const user = await User.findByPk(id);
     return user!;
   }
 
-  async isLogin(token: string): Promise<number> {
-    const decoded = Object(jwt.verify(token, process.env.JWT_SECRET as string));
-    return Number(decoded.id!);
+  isLogin(token: string): number {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      id: number;
+    };
+    return decoded.id;
   }
-
-  // Delete User
   async deleteMe(userId: number): Promise<void> {
     const user = await User.findByPk(userId);
-    user?.destroy();
+    await user?.destroy();
   }
 }
+
 export default UserAuth;
