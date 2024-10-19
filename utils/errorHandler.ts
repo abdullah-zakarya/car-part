@@ -1,16 +1,22 @@
-import { ExpressHandler } from '../types/types';
+import { NextFunction, Request, Response } from 'express';
 import AppError from './AppError';
 
-// ديكوراتور لالتقاط الأخطاء
-function catchAsyncErrors<T1, T2>(fn: Function): ExpressHandler<T1, T2> {
-  const res: ExpressHandler<T1, T2> = async (req, res, next) => {
-    try {
-      await fn(req, res, next);
-    } catch (err) {
-      next(err);
-    }
-  };
-  return res;
-}
-
-export default catchAsyncErrors;
+const errorHandler = (
+  err: AppError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const statusCode: number = err.statusCode || 500;
+  let message = err.message || 'Something went wrong';
+  if (!err.statusCode) {
+    // message = Object.values(err)[1][0].message || 'Something went wrong';
+    console.error(err);
+  }
+  res.status(statusCode).json({
+    status: 'error',
+    statusCode,
+    message,
+  });
+};
+export default errorHandler;

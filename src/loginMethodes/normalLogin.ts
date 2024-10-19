@@ -17,7 +17,7 @@ export default class NormalLogin implements ILoginMethod {
     password: string;
   }): Promise<User> {
     const user = await User.findOne({ where: { email } });
-    if (!user || !(await bcrypt.compare(user.password, password))) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new AppError('Invalid credentials', 403);
     }
     return user;
