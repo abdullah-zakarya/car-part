@@ -43,7 +43,11 @@ Message.init(
   },
   {
     sequelize,
-    indexes: [{ fields: ['senderId', 'receiverId'] }, { fields: ['time'] }],
+    indexes: [
+      { fields: ['senderId', 'receiverId'] },
+      { fields: ['receiverId', 'senderId'] },
+      { fields: ['time'] },
+    ],
     timestamps: true,
   }
 );

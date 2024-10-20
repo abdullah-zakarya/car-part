@@ -27,7 +27,7 @@ router.post('/send', chatController.sendMessage);
  * @body {number} page - The page number for pagination (default: 1)
  * @returns {Array} - An array of chat objects
  */
-router.post('/all', chatController.getAllChats);
+router.get('/all', chatController.getAllChats);
 
 /**
  * @route POST /api/chats/one
@@ -39,6 +39,6 @@ router.post('/all', chatController.getAllChats);
  * @body {number} page - The page number for pagination (default: 1)
  * @returns {Array} - An array of message objects
  */
-router.post('/:id', chatController.getOneChat);
+router.get('/:id', chatController.getOneChat);
 const chatRouter = router;
 export default chatRouter;

@@ -50,12 +50,6 @@ describe('UserAuth', () => {
       expect(id).toEqual(user.id);
     });
 
-    // it('should throw an error for an invalid token', async () => {
-    //   expect(await userAuth.isLogin('invalid-token')).rejects.toThrow(
-    //     'Invalid or malformed token'
-    //   );
-    // });
-
     it('should throw an error for an invalid token', async () => {
       await expect(userAuth.isLogin('invalid-token')).rejects.toThrow(
         'Invalid or malformed token'

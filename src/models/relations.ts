@@ -11,12 +11,12 @@ User.hasMany(Message, { foreignKey: 'senderId' });
 User.hasMany(Message, { foreignKey: 'receiverId' });
 
 // Message belongs to both sender and receiver
-Message.belongsTo(User, { as: 'Sender', foreignKey: 'senderId' });
-Message.belongsTo(User, { as: 'Receiver', foreignKey: 'receiverId' });
+Message.belongsTo(User, { as: 'sender', foreignKey: 'senderId' });
+Message.belongsTo(User, { as: 'receiver', foreignKey: 'receiverId' });
 
 // One user can have multiple reset codes
-User.hasMany(ResetCode, { foreignKey: 'email' });
-ResetCode.belongsTo(User, { foreignKey: 'email' });
+User.hasMany(Message, { as: 'sentMessages', foreignKey: 'senderId' });
+User.hasMany(Message, { as: 'receivedMessages', foreignKey: 'receiverId' });
 
 // Each sale is associated with one part
 Sale.belongsTo(Part, { foreignKey: 'partId' });

@@ -43,14 +43,9 @@ class ChatController {
   // Get all chats for a user
   public getAllChats: ExpressHandler<getAllChatsRequest, getAllChatsResponse> =
     async (req, res, next) => {
-      const { userId, limit = 10, page = 1 } = req.body;
-
-      if (!userId) {
-        return next(new AppError('UserId, limit, and page are required', 403));
-      }
-
+      const { limit = 10, page = 1 } = req.body;
+      const userId = res.locals.userId;
       const chats = await this.dao.getAllChat({ userId, limit, page });
-
       res.status(200).json({
         chats,
       });
@@ -62,14 +57,13 @@ class ChatController {
     getOneChatRequest,
     getOneChatResponse
   > = async (req, res, next) => {
-    const userId2 = req.params.id;
+    const userId2 = Number(req.params.id);
+    if (!userId2) return next(new AppError('invalid userId', 403));
+    const user2 = await User.findByPk(userId2);
+    if (!user2) return next(new AppError('User not found', 404));
+
     const userId1 = res.locals.userId;
     const { limit = 10, page = 1 } = req.body;
-
-    if (!userId1 || !userId2) {
-      return next(new AppError('All fields are required', 403));
-    }
-
     const messages = await this.dao.getOneChat({
       userId1,
       userId2,
