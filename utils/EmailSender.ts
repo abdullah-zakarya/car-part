@@ -4,10 +4,9 @@ export default class EmailSend {
     const msg = `from : ${from}
           to : ${to}
           ${text}
-          ${Date.now()}`;
-    console.log(msg);
+          ${Date.now().toString()}`;
+    this.send();
   }
-
   public send() {
     console.log('Sending email...');
   }

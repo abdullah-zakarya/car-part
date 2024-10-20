@@ -1,14 +1,15 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import ILoginMethod from '../../loginMethodes/ILoginMethod';
+import ILoginMethod from './loginMethodes/ILoginMethod';
 import User from '../../models/User';
-import NormalLogin from '../../loginMethodes/normalLogin';
-import GoogleOAuth from '../../loginMethodes/TherdPartyAllow/Google';
+import NormalLogin from './loginMethodes/normalLogin';
+import GoogleOAuth from './loginMethodes/TherdPartyAllow/Google';
 import AppError from '../../../utils/AppError';
 import EmailSend from '../../../utils/EmailSender';
 import ResetCode from '../../models/ResetCode';
 import { Op } from 'sequelize';
 import { promisify } from 'util';
+import loginChick from '../../../utils/loginCheck';
 
 class UserAuth {
   private static LOGIN_METHODS: Record<string, new () => ILoginMethod> = {
@@ -95,8 +96,8 @@ class UserAuth {
 
     const user = await User.findOne({ where: { email } });
     await new NormalLogin().updatePassword(user!.id, newPassword);
-
-    return this.createToken(user!.id);
+    const token = this.createToken(user!.id);
+    return token;
   }
 
   async updateMe(userId: number, updatedFields: object): Promise<User> {
@@ -111,11 +112,9 @@ class UserAuth {
     return user!;
   }
 
-  isLogin(token: string): number {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-      id: number;
-    };
-    return decoded.id;
+  async isLogin(token: string): Promise<number> {
+    const userId = await loginChick(token);
+    return userId;
   }
   async deleteMe(userId: number): Promise<void> {
     const user = await User.findByPk(userId);

@@ -4,14 +4,14 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-} from "sequelize";
-import sequelize from "../../config/database";
-import User from "./User";
+} from 'sequelize';
+import sequelize from '../../config/database';
+import User from './User';
 class Part extends Model<InferAttributes<Part>, InferCreationAttributes<Part>> {
   declare id: CreationOptional<number>; // like 1
   declare owner: number;
   declare carType: string; // nesan
-  declare parType: string; // merorr
+  declare category: string; // merorr
   declare brand: string; // brand of the part
   declare madeIn: Date;
   declare year: Date;
@@ -37,7 +37,7 @@ Part.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    parType: {
+    category: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -76,9 +76,9 @@ Part.init(
   },
   {
     sequelize,
-    modelName: "Part",
+    modelName: 'Part',
     timestamps: false,
-    indexes: [{ fields: ["carType", "partType"] }],
+    indexes: [{ fields: ['carType', 'partType'] }],
   }
 );
 export default Part;

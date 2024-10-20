@@ -21,9 +21,6 @@ class StatusFilterStrategy implements FilterStrategy {
     };
   }
 }
-const catagori = new CategoryFilterStrategy();
-const status = new StatusFilterStrategy();
-export { status, catagori };
 class OriginalFilterStrategy implements FilterStrategy {
   applyFilter(filterValue: boolean): {} {
     return {
@@ -46,18 +43,28 @@ class YearFilterStrategy implements FilterStrategy {
   applyFilter(filterValue: number): {} {
     return {
       year: {
-        [Op.eq]: new Date(`${filterValue}-01-01`), // مقارنة السنة بشكل دقيق
+        [Op.eq]: new Date(`${filterValue}-01-01`),
       },
     };
   }
 }
 
 class PriceFilterStrategy implements FilterStrategy {
-  applyFilter(filterValue: { start: number; end: number }): {} {
+  applyFilter(filterValue: [number, number]): {} {
     return {
       price: {
-        [Op.between]: [filterValue.start, filterValue.end],
+        [Op.between]: filterValue,
       },
     };
   }
 }
+
+export {
+  PriceFilterStrategy,
+  YearFilterStrategy,
+  CarTypeFilterStrategy,
+  CategoryFilterStrategy,
+  StatusFilterStrategy,
+  OriginalFilterStrategy,
+  FilterStrategy,
+};

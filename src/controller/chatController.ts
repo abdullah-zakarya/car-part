@@ -10,6 +10,7 @@ import {
 } from '../../types/api';
 import AppError from '../../utils/AppError';
 import { sendMessage } from '../../socket';
+import User from '../models/User';
 
 class ChatController {
   private dao: ChatDao;
@@ -20,12 +21,13 @@ class ChatController {
   // Send a message
   public sendMessage: ExpressHandler<sendMessageRequest, sendMessageResponse> =
     async (req, res, next) => {
-      const { receiverId, message } = req.body;
+      let { receiverId, message } = req.body;
       const senderId = res.locals.userId;
-
-      if (!receiverId || !message) {
+      receiverId = Number(receiverId);
+      if (!Number(receiverId) || !message)
         return next(new AppError('Receiver and message are required', 403));
-      }
+      const receiver = await User.findByPk(receiverId);
+      if (!receiver) return next(new AppError('this user is not exist', 404));
       sendMessage({ senderId, receiverId, message });
       const newMessage = await this.dao.send({
         senderId,

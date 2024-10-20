@@ -9,16 +9,23 @@ export enum CarType {
   mercedes = 'mercades',
   subaru = 'subaru',
   porsche = 'porsche',
-//   etc..
 }
-export enum {
-engine='engine',
-oilFilter='oil filter',
-tachometer='tachometer',
-battery='battery',
-radiator='radiator',
-airFilter='air filter',
-shockAbsorbers='shock absorbers',
-steering='steering',
-struts='struts'
-}   
+export enum Catagory {
+  engine = 'engine',
+  oilFilter = 'oil_filter',
+  tachometer = 'tachometer',
+  battery = 'battery',
+  radiator = 'radiator',
+  airFilter = 'air_filter',
+  shockAbsorbers = 'shock_absorbers',
+  steering = 'steering',
+  struts = 'struts',
+}
+export interface filterFields {
+  price?: [number, number];
+  catagory?: Catagory[];
+  status?: boolean;
+  year?: number;
+  carType?: CarType[];
+  orignal?: boolean;
+}

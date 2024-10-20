@@ -1,5 +1,4 @@
-import User from '../../models/User';
-
+import User from '../../../models/User';
 interface ILoginMethod {
   login(obj: {}): Promise<User>;
   signup(obj: {}): Promise<User>;

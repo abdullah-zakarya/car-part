@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.63% </span>
+                <span class="strong">97.6% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>124/127</span>
+                <span class='fraction'>122/125</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.11% </span>
+                <span class="strong">94.44% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>16/17</span>
+                <span class='fraction'>17/18</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.63% </span>
+                <span class="strong">97.6% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>124/127</span>
+                <span class='fraction'>122/125</span>
             </div>
         
             
@@ -188,9 +188,7 @@
 <a name='L123'></a><a href='#L123'>123</a>
 <a name='L124'></a><a href='#L124'>124</a>
 <a name='L125'></a><a href='#L125'>125</a>
-<a name='L126'></a><a href='#L126'>126</a>
-<a name='L127'></a><a href='#L127'>127</a>
-<a name='L128'></a><a href='#L128'>128</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L126'></a><a href='#L126'>126</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -205,14 +203,15 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -226,20 +225,20 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -305,10 +304,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -319,15 +315,16 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import ILoginMethod from '../../loginMethodes/ILoginMethod';
+import ILoginMethod from './loginMethodes/ILoginMethod';
 import User from '../../models/User';
-import NormalLogin from '../../loginMethodes/normalLogin';
-import GoogleOAuth from '../../loginMethodes/TherdPartyAllow/Google';
+import NormalLogin from './loginMethodes/normalLogin';
+import GoogleOAuth from './loginMethodes/TherdPartyAllow/Google';
 import AppError from '../../../utils/AppError';
 import EmailSend from '../../../utils/EmailSender';
 import ResetCode from '../../models/ResetCode';
 import { Op } from 'sequelize';
 import { promisify } from 'util';
+import loginChick from '../../../utils/loginCheck';
 &nbsp;
 class UserAuth {
   private static LOGIN_METHODS: Record&lt;string, new () =&gt; ILoginMethod&gt; = {
@@ -414,8 +411,8 @@ class UserAuth {
 &nbsp;
     const user = await User.findOne({ where: { email } });
     await new NormalLogin().updatePassword(user!.id, newPassword);
-&nbsp;
-    return this.createToken(user!.id);
+    const token = this.createToken(user!.id);
+    return token;
   }
 &nbsp;
   async updateMe(userId: number, updatedFields: object): Promise&lt;User&gt; {
@@ -431,12 +428,9 @@ class UserAuth {
 <span class="cstat-no" title="statement not covered" >  }</span>
 &nbsp;
   async isLogin(token: string): Promise&lt;number&gt; {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-      id: number;
-    };
-    return decoded.id;
+    const userId = await loginChick(token);
+    return userId;
   }
-&nbsp;
   async deleteMe(userId: number): Promise&lt;void&gt; {
     const user = await User.findByPk(userId);
     await user?.destroy();
@@ -451,7 +445,7 @@ export default UserAuth;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-10-12T09:18:36.904Z
+                at 2024-10-20T13:22:05.376Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

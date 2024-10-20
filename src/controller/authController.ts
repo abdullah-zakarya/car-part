@@ -168,7 +168,7 @@ class AuthController {
       const [tokenType, token] = auth ? auth.split(' ') : [];
       if (tokenType !== 'Bearer' || !token)
         return next(new AppError('Token is required', 403));
-      const userId = this.dao.isLogin(token);
+      const userId = await this.dao.isLogin(token);
       res.locals.userId = userId;
       next();
     } catch (error) {
