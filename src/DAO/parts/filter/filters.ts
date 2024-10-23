@@ -1,11 +1,12 @@
 import { Op } from 'sequelize';
+import { Catagory } from '../../../../types/partsTypes';
 
 interface FilterStrategy {
   applyFilter(filterValue: any): {};
 }
 
 class CategoryFilterStrategy implements FilterStrategy {
-  applyFilter(filterValue: string[]): {} {
+  applyFilter(filterValue: Catagory[]): {} {
     return {
       category: {
         [Op.or]: filterValue,

@@ -12,6 +12,7 @@ import {
 } from './filter/filters';
 import Cart from '../../models/Cart';
 import { filterFields } from '../../../types/partsTypes';
+import { addPartRequest } from '../../../types/api';
 
 /**
  * PartDao class handles operations related to Part objects, such as fetching, adding, and filtering parts.
@@ -84,8 +85,8 @@ class PartDao {
    * @param partData - Object containing the part data to be added.
    * @returns The newly created part.
    */
-  public async addPart(partData: Omit<Part, 'id' | 'postedAt'>): Promise<Part> {
-    const newPart = await this.model.create(partData);
+  public async addPart(part: any): Promise<Part> {
+    const newPart = await this.model.create(part);
     return newPart;
   }
 

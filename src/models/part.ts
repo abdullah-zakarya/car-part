@@ -20,6 +20,7 @@ class Part extends Model<InferAttributes<Part>, InferCreationAttributes<Part>> {
   declare mainPhoto: string;
   declare photos: string[] | undefined;
   declare postedAT: CreationOptional<Date>;
+  declare stock: number;
 }
 
 Part.init(
@@ -72,6 +73,10 @@ Part.init(
     postedAT: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+    },
+    stock: {
+      type: DataTypes.INTEGER,
+      defaultValue: 1,
     },
   },
   {

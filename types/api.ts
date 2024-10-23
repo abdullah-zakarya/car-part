@@ -1,17 +1,18 @@
 import User from '../src/models/User';
+import Message from '../src/models/Message';
+import Part from '../src/models/Part';
+import { ExpressHandler, ExpressHandlerWithParams } from './types';
 
-// login normaly
+// User Authentication Types
 export type normalLoginRequest = Pick<User, 'email' | 'password'>;
-export type normalLoginRespone = {
+export type normalLoginResponse = {
   jwt: string;
   user: Pick<User, 'name' | 'email' | 'gender' | 'id'>;
 };
 
-// login
 export type loginRequest = normalLoginRequest;
-export type loginResponse = normalLoginRespone;
+export type loginResponse = normalLoginResponse;
 
-// singup
 export type NormalSignUpRequest = Pick<
   User,
   'email' | 'name' | 'password' | 'gender'
@@ -21,7 +22,7 @@ export interface SignUpResponse {
   user: Pick<User, 'name' | 'email' | 'gender' | 'id'>;
 }
 
-// forgot password
+// Password Management Types
 export interface forgotPasswordRequest {
   email: string;
 }
@@ -29,7 +30,6 @@ export interface forgotPasswordResponse {
   message: string;
 }
 
-// restPassword
 export interface resetPasswordRequest {
   email: string;
   resetCode: string;
@@ -39,12 +39,11 @@ export interface resetPasswordResponse {
   jwt: string;
 }
 
-// showMe
+// User Information Types
 export interface showMeResponse {
   user: Pick<User, 'name' | 'email' | 'gender' | 'id'>;
 }
 
-// is login
 export interface isLoginRequest {
   token: string;
 }
@@ -52,14 +51,11 @@ export interface isLoginResponse {
   userId: number;
 }
 
-// delete user
 export interface deleteMeResponse {
   message: string;
 }
 
-import Message from '../src/models/Message';
-
-// Send a message
+// Message Types
 export type sendMessageRequest = Pick<Message, 'receiverId' | 'message'>;
 export type sendMessageResponse = {
   message: Pick<
@@ -68,7 +64,6 @@ export type sendMessageResponse = {
   >;
 };
 
-// Get all chats for a user
 export interface getAllChatsRequest {
   userId: number;
   limit: number;
@@ -78,7 +73,6 @@ export interface getAllChatsResponse {
   chats: Pick<Message, 'senderId' | 'receiverId' | 'message' | 'time'>[];
 }
 
-// Get messages between two users
 export interface getOneChatRequest {
   userId1: number;
   userId2: number;
@@ -91,3 +85,61 @@ export interface getOneChatResponse {
     'senderId' | 'receiverId' | 'message' | 'time' | 'isRead'
   >[];
 }
+
+export interface getOnePartResponse {
+  part: Part;
+}
+export interface filterFields {
+  category?: string[];
+  price?: [number, number];
+  status?: boolean;
+  year?: number;
+  carType?: string[];
+  original?: boolean;
+}
+
+export interface GetAllPartsPrams extends filterFields {
+  limit?: number;
+  page?: number;
+  sort?: string;
+}
+
+export interface getAllPartsResponse {
+  parts: Part[];
+  total: number;
+}
+
+export interface addPartToCartResponse {
+  message: string;
+}
+// طلب إضافة جزء جديد
+
+export type getPartType = ExpressHandlerWithParams<
+  { id: number },
+  null,
+  getOnePartResponse
+>;
+export type getAllPartsType = ExpressHandlerWithParams<
+  GetAllPartsPrams,
+  null,
+  getAllPartsResponse
+>;
+type addPartRequest = Pick<
+  Part,
+  | 'category'
+  | 'price'
+  | 'carType'
+  | 'new'
+  | 'brand'
+  | 'madeIn'
+  | 'year'
+  | 'mainPhoto'
+  | 'stock'
+  | 'photos'
+>;
+export type addPartType = ExpressHandler<addPartRequest, { part: Part }>;
+export type addPartToCartType = ExpressHandlerWithParams<
+  { id: number },
+  null,
+  { message: string }
+>;

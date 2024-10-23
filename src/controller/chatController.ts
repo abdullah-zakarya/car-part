@@ -11,6 +11,7 @@ import {
 import AppError from '../../utils/AppError';
 import { sendMessage } from '../../socket';
 import User from '../models/User';
+import catchError from '../../utils/catchErrors';
 
 class ChatController {
   private dao: ChatDao;
@@ -19,16 +20,21 @@ class ChatController {
   }
 
   // Send a message
+  @catchError
   public sendMessage: ExpressHandler<sendMessageRequest, sendMessageResponse> =
     async (req, res, next) => {
       let { receiverId, message } = req.body;
       const senderId = res.locals.userId;
       receiverId = Number(receiverId);
-      if (!Number(receiverId) || !message)
+
+      if (!receiverId || !message)
         return next(new AppError('Receiver and message are required', 403));
+
       const receiver = await User.findByPk(receiverId);
       if (!receiver) return next(new AppError('this user is not exist', 404));
+
       sendMessage({ senderId, receiverId, message });
+
       const newMessage = await this.dao.send({
         senderId,
         receiverId,
@@ -41,6 +47,7 @@ class ChatController {
     };
 
   // Get all chats for a user
+  @catchError
   public getAllChats: ExpressHandler<getAllChatsRequest, getAllChatsResponse> =
     async (req, res, next) => {
       const { limit = 10, page = 1 } = req.body;
@@ -52,6 +59,7 @@ class ChatController {
     };
 
   // Get one chat between two users
+  @catchError
   public getOneChat: ExpressHandlerWithParams<
     { id: number },
     getOneChatRequest,
