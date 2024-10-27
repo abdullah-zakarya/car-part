@@ -5,9 +5,6 @@ export default class EmailSend {
           to : ${to}
           ${text}
           ${Date.now().toString()}`;
-    this.send();
-  }
-  public send() {
-    console.log('Sending email...');
+    console.log(msg);
   }
 }

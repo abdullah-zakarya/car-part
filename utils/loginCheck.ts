@@ -8,7 +8,7 @@ const loginChick = async (token: string) => {
     )) as { id: number };
     return decoded.id;
   } catch (error) {
-    throw new AppError('Invalid or malformed token', 403);
+    throw new AppError('Invalid or malformed token', 401);
   }
 };
 export default loginChick;

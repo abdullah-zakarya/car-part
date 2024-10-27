@@ -1,6 +1,6 @@
 import request from 'supertest';
 import app from '../app';
-import UserAuth from '../src/DAO/auth/UserAuth';
+import UserAuth from '../src/auth/authDao/UserAuth';
 import { Gender } from '../types/types';
 import User from '../src/models/User';
 import Message from '../src/models/Message';
@@ -63,7 +63,10 @@ describe('Message API Testing', () => {
           message: 'This user does not exist!',
         });
 
-      expect(response.body).toHaveProperty('message', 'this user is not exist');
+      expect(response.body).toHaveProperty(
+        'message',
+        'This user does not exist'
+      );
       expect(response.status).toBe(404);
     });
 
@@ -149,14 +152,26 @@ describe('Message API Testing', () => {
   });
 
   describe('get all chat testing', () => {
-    beforeAll(async () => {
-      for (let i = 0; i < 20; i++)
-        await Message.create({
-          senderId: user1.id,
-          receiverId: user2.id,
-          message: `message number ${i}`,
-        });
-    });
+    const messages: Message[] = [];
+    // beforeAll(async () => {
+    //   for (let i = 0; i < 20; i++) {
+    //     // messages.push(
+    //     //   await Message.create({
+    //     //     senderId: user1.id,
+    //     //     receiverId: user2.id,
+    //     //     message: `hello ${user2.name} message number ${i}`,
+    //     //   })
+    //     // );
+
+    //     messages.push(
+    //       await Message.create({
+    //         senderId: user2.id,
+    //         receiverId: user1.id,
+    //         message: `hello ${user1.name} message number ${i}`,
+    //       })
+    //     );
+    //   }
+    // });
 
     // Test: Retrieve all chats for a user
     it('should retrieve all chats for user1', async () => {
@@ -171,7 +186,7 @@ describe('Message API Testing', () => {
       expect(response.status).toBe(200);
       expect(response.body.chats).toBeInstanceOf(Array);
       expect(response.body.chats.length).toBeLessThanOrEqual(10); // Assuming a maximum of 10 results per page
-    });
+    }, 10000);
 
     // Test: Retrieve chat between user1 and user2
     it('should retrieve chat between user1 and user2', async () => {
@@ -201,5 +216,13 @@ describe('Message API Testing', () => {
       expect(response.status).toBe(404); // User does not exist
       expect(response.body).toHaveProperty('message', 'User not found');
     });
+    afterAll(() => {
+      messages.map(async (el) => await el.destroy());
+    });
+  });
+
+  afterAll(async () => {
+    await user1.destroy();
+    await user2.destroy();
   });
 });

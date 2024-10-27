@@ -2,7 +2,6 @@ import { Server as SocketIOServer } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import http from 'http';
 import User from './src/models/User';
-import AppError from './utils/AppError';
 import Message from './src/models/Message';
 import app from './app';
 const isLogin = async (token: string): Promise<number> => {
@@ -46,4 +45,3 @@ const sendMessage = (
 };
 
 export { sendMessage, server };
-// mckenzy :J#J*J5HtprcWPUL

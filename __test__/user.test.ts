@@ -1,9 +1,7 @@
-import UserAuth from '../src/DAO/auth/UserAuth';
+import UserAuth from '../src/auth/authDao/UserAuth';
 import User from '../src/models/User';
-import AppError from '../utils/AppError';
 import ResetCode from '../src/models/ResetCode';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import { Gender } from '../types/types';
 
 describe('UserAuth', () => {

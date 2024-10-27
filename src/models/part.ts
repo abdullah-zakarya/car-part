@@ -7,19 +7,19 @@ import {
 } from 'sequelize';
 import sequelize from '../../config/database';
 import User from './User';
+import AppError from '../../utils/AppError';
 class Part extends Model<InferAttributes<Part>, InferCreationAttributes<Part>> {
   declare id: CreationOptional<number>; // like 1
   declare owner: number;
   declare carType: string; // nesan
   declare category: string; // merorr
   declare brand: string; // brand of the part
-  declare madeIn: Date;
+  declare madeIn: string;
   declare year: Date;
   declare price: number;
   declare new: boolean;
   declare mainPhoto: string;
   declare photos: string[] | undefined;
-  declare postedAT: CreationOptional<Date>;
   declare stock: number;
 }
 
@@ -47,16 +47,31 @@ Part.init(
       allowNull: false,
     },
     madeIn: {
-      type: DataTypes.DATE,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     year: {
       type: DataTypes.DATE,
       allowNull: false,
+      validate: {
+        isReal(value: Date) {
+          if (Number(value) > Date.now()) {
+            throw new AppError('is this from the future !!', 403);
+          }
+          if (Number(value) < new Date(0).setFullYear(1950)) {
+            throw new AppError('this part already dead');
+          }
+        },
+      },
     },
     price: {
       type: DataTypes.DOUBLE,
       allowNull: false,
+      validate: {
+        isNumeric: {
+          msg: 'the price must be number',
+        },
+      },
     },
     new: {
       type: DataTypes.BOOLEAN,
@@ -70,10 +85,6 @@ Part.init(
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: true,
     },
-    postedAT: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-    },
     stock: {
       type: DataTypes.INTEGER,
       defaultValue: 1,
@@ -82,8 +93,8 @@ Part.init(
   {
     sequelize,
     modelName: 'Part',
-    timestamps: false,
-    indexes: [{ fields: ['carType', 'partType'] }],
+    timestamps: true,
+    indexes: [{ fields: ['carType', 'category'] }],
   }
 );
 export default Part;
