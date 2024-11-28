@@ -9,8 +9,8 @@ response : {
 user:UserInfo
 jwt : stirng
 }
-singup
-{{url}}:3000/user/singup
+signup
+{{url}}:3000/user/signup
 request : {
 email : "string@gmail.com" //must be unique
 gender: "male"|| "female"
@@ -28,7 +28,9 @@ email : "string@gmail.com"
 request : {
 message  
  }
+
 <!-- and sending email with resetCode -->
+
 reset passowrd
 {{url}}:3000/user/reset-password
 request : {

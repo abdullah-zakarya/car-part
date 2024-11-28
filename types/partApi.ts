@@ -1,3 +1,4 @@
+import Cart from '../src/models/Cart';
 import Part from '../src/models/Part';
 import { getOnePartResponse } from './chatApi';
 import { ExpressHandler, ExpressHandlerWithParams } from './types';
@@ -54,4 +55,41 @@ export type addPartToCartType = ExpressHandlerWithParams<
   { id: number },
   null,
   { message: string }
+>;
+export type deletePartType = ExpressHandlerWithParams<
+  { id: number },
+  null,
+  null
+>;
+export type deletePartFromCartType = ExpressHandlerWithParams<
+  { partId: number },
+  null,
+  {}
+>;
+
+export type updatePartType = ExpressHandlerWithParams<
+  { id: number },
+  addPartType,
+  getPartType
+>;
+// type cartTypeRes = Cart & Pick<Part, 'category' | 'price' | 'carType'>;
+
+type getAllMyCartItemsResponse = { carts: Cart[] };
+
+export type getAllMyCartItemsType = ExpressHandler<
+  {},
+  getAllMyCartItemsResponse
+>;
+
+type buyPartResponse = {
+  part: Part;
+  shipping: string;
+  arrivingTime: string;
+  shippingPrice: number;
+  totalCost: number;
+};
+export type buyPartType = ExpressHandlerWithParams<
+  { id: number },
+  {},
+  buyPartResponse
 >;

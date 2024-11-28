@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
-import Part from '../../models/Part';
-import AppError from '../../../utils/AppError';
+import Part from '../models/Part';
+import AppError from '../../utils/AppError';
 import {
   CategoryFilterStrategy,
   PriceFilterStrategy,
@@ -9,9 +9,9 @@ import {
   YearFilterStrategy,
   CarTypeFilterStrategy,
   OriginalFilterStrategy,
-} from './filter/filters';
-import Cart from '../../models/Cart';
-import { filterFields } from '../../../types/partsTypes';
+} from './filters';
+import Cart from '../models/Cart';
+import { filterFields } from '../../types/partsTypes';
 
 /**
  * PartDao class handles operations related to Part objects, such as fetching, adding, and filtering parts.
@@ -30,7 +30,6 @@ class PartDao {
       original: new OriginalFilterStrategy(),
     };
   }
-
   /**
    * Get a specific part by its ID.
    * @param id - The ID of the part to fetch.
@@ -126,31 +125,13 @@ class PartDao {
     await Cart.create({ partId, userId });
   }
 
-  /**
-   * Remove a part from the user's cart.
-   * @param userId - ID of the user.
-   * @param PartId - ID of the part to remove.
-   * @throws AppError if the operation fails.
-   */
-  public async deletePartFromCart({
-    userId,
-    partId,
-  }: {
-    userId: number;
-    partId: number;
-  }): Promise<void> {
-    const deleted = await Cart.destroy({
-      where: { [Op.and]: [{ userId }, { partId }] },
-    });
-    if (!deleted) throw new AppError('Part not found in cart', 404);
-  }
+  // TODO : buy Part
 
   /**
    * Dynamically generate filtering conditions based on the provided filters.
    * @param filters - Array of filter objects.
    * @returns Sequelize where clause for filtering.
    */
-
   private filterFactory(filters: { [key: string]: any }): any {
     const queryFilters: any = {};
     const fields = Object.keys(filters);
@@ -174,6 +155,6 @@ class PartDao {
 }
 
 export default PartDao;
-// api part?sort=-price& price=[50,70],catagory=[Air-filter,battery]
+// api part?sort=-price& price=[50,70],category=[Air-filter,battery]
 // price :[number, number]
 //

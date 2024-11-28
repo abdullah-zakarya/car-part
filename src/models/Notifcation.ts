@@ -6,16 +6,16 @@ import {
 } from 'sequelize';
 import sequelize from '../../config/database';
 
-class Notifcation extends Model<
-  InferAttributes<Notifcation>,
-  InferCreationAttributes<Notifcation>
+class Notification extends Model<
+  InferAttributes<Notification>,
+  InferCreationAttributes<Notification>
 > {
   declare userId: number;
   declare text: string;
   declare readed: boolean;
 }
 
-Notifcation.init(
+Notification.init(
   {
     userId: {
       type: DataTypes.INTEGER,
@@ -34,4 +34,4 @@ Notifcation.init(
   }
 );
 
-export default Notifcation;
+export default Notification;

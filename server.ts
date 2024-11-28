@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import sequelize from './config/database';
-import http from 'http';
 import { server } from './socket';
 
 dotenv.config();

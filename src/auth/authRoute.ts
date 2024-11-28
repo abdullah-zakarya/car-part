@@ -12,7 +12,7 @@ const authController = new AuthController();
  * @desc    User signup using normal authentication
  * @access  Public
  */
-router.post('/signup', catchAsync(authController.normalSingup));
+router.post('/signup', catchAsync(authController.normalsignup));
 
 /**
  * @route   POST /api/auth/login

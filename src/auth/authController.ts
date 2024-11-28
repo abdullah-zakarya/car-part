@@ -1,6 +1,6 @@
 import {
   normalLoginType,
-  normalSingupType,
+  normalsignupType,
   forgotPasswordType,
   resetPasswordType,
   showMeType,
@@ -25,7 +25,7 @@ class AuthController {
    * @route POST /api/v1/user/signup
    * @access Public
    */
-  public normalSingup: normalSingupType = async (req, res, next) => {
+  public normalsignup: normalsignupType = async (req, res, next) => {
     const { name, password, email, gender = Gender.male } = req.body;
     // validation
     if (!name || !email || !password)
