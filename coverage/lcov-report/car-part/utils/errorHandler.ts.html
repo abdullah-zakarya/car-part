@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">24% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>20/25</span>
-            </div>
-        
-            
-            <div class='fl pad1y space-right2'>
-                <span class="strong">20% </span>
-                <span class="quiet">Branches</span>
-                <span class='fraction'>1/5</span>
+                <span class='fraction'>6/25</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
-                <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">24% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>20/25</span>
+                <span class='fraction'>6/25</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -93,50 +93,50 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { NextFunction, Request, Response } from 'express';
 import AppError from './AppError';
 import { Sequelize, ValidationError } from 'sequelize';
 &nbsp;
-const errorHandler = (
-  err: AppError,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) =&gt; {
-  let statusCode: number = err.statusCode<span class="branch-0 cbranch-no" title="branch not covered" > || 500;</span>
-  let message = err.message<span class="branch-0 cbranch-no" title="branch not covered" > || 'Something went wrong';</span>
-  if (message.startsWith('Validation error')) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+const errorHandler = <span class="fstat-no" title="function not covered" >(</span>
+<span class="cstat-no" title="statement not covered" >  err: AppError,</span>
+<span class="cstat-no" title="statement not covered" >  req: Request,</span>
+<span class="cstat-no" title="statement not covered" >  res: Response,</span>
+<span class="cstat-no" title="statement not covered" >  next: NextFunction</span>
+<span class="cstat-no" title="statement not covered" >) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  let statusCode: number = err.statusCode || 500;</span>
+<span class="cstat-no" title="statement not covered" >  let message = err.message || 'Something went wrong';</span>
+<span class="cstat-no" title="statement not covered" >  if (message.startsWith('Validation error')) {</span>
 <span class="cstat-no" title="statement not covered" >    const error = err as ValidationError;</span>
 <span class="cstat-no" title="statement not covered" >    message = error.errors[0].message;</span>
 <span class="cstat-no" title="statement not covered" >    statusCode = 400;</span>
-  } else if (!err.statusCode) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >  } else if (!err.statusCode) {</span>
 <span class="cstat-no" title="statement not covered" >    console.error(err);</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
-  res.status(statusCode).json({
-    status: 'error',
-    message,
-  });
-};
+<span class="cstat-no" title="statement not covered" >  res.status(statusCode).json({</span>
+<span class="cstat-no" title="statement not covered" >    status: 'error',</span>
+<span class="cstat-no" title="statement not covered" >    message,</span>
+<span class="cstat-no" title="statement not covered" >  });</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 export default errorHandler;
 &nbsp;</pre></td></tr></table></pre>
 
@@ -145,7 +145,7 @@ export default errorHandler;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-10-27T01:39:19.600Z
+                at 2024-11-26T22:32:31.014Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

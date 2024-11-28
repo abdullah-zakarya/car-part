@@ -21,7 +21,7 @@ const io = new SocketIOServer(server, {
   },
 });
 
-// recored the users
+// recorded the users
 io.on('connection', async (socket) => {
   const token: string = socket.handshake.headers.token as string;
   if (!token) return socket.emit('Unauthorized', 'No token provided');

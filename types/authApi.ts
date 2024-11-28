@@ -48,7 +48,7 @@ interface deleteMeResponse {
   message: string;
 }
 
-export type normalSingupType = ExpressHandler<
+export type normalsignupType = ExpressHandler<
   NormalSignUpRequest,
   SignUpResponse
 >;

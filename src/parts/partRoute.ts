@@ -11,7 +11,6 @@ const partController = new PartController();
  * @description Get a part by its ID.
  */
 router.get('/:id', catchErr(partController.getPart));
-
 /**
  * @route GET /api/parts
  * @description Get all parts with optional filters, pagination, and sorting.
@@ -32,9 +31,21 @@ router.post('/', catchAsync(partController.addPart));
 router.post('/:id/addToCart', catchErr(partController.addPartToCart));
 
 /**
- * @route DELETE /api/cart/:partId
+ * @route DELETE /api/cart/:partId/cart
  * @description Remove a part from the user's cart.
  */
-router.delete('/:partId', catchErr(partController.deletePartFromCart));
+
+/**
+ * @route PUT /api/v1/parts/:id
+ * @description update the part information in the store
+ */
+router.put('/:id', catchErr(partController.updatePart));
+
+// router.delete('/:partId/cart', catchErr(partController.deletePartFromCart));
+/**
+ * @ route DELETE /api/cart/:partId
+ *@description Remove a part from the store
+ */
+router.delete('/:id', catchErr(partController.deletePart));
 const partRoute = router;
 export default partRoute;

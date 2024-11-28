@@ -1,11 +1,14 @@
-import PartDao from './partsDao/partsDao';
+import PartDao from './partsDao';
 import AppError from '../../utils/AppError';
 import {
   addPartToCartType,
   addPartType,
+  deletePartFromCartType,
+  deletePartType,
   GetAllPartsPrams,
   getAllPartsType,
   getPartType,
+  updatePartType,
 } from './../../types/partApi';
 import { ExpressHandlerWithParams } from '../../types/types';
 import { catchError } from '../../utils/catchErrors';
@@ -45,7 +48,6 @@ class PartController {
    * @route GET /api/parts
    * @returns Returns a list of parts matching the filter and sorting criteria.
    */
-  @catchError
   public getAllParts: getAllPartsType = async (req, res, next) => {
     const { limit = 10, page = 1, sort } = req.query;
     const filters = this.getFilterFromPrams(req.query);
@@ -64,7 +66,6 @@ class PartController {
    * @route POST /api/parts
    * @returns The newly added part.
    */
-  @catchError
   public addPart: addPartType = async (req, res, next) => {
     const {
       category,
@@ -120,7 +121,6 @@ class PartController {
    * @param next - Next middleware function
    * @returns Success message if the part is added to the cart.
    */
-  @catchError
   public addPartToCart: addPartToCartType = async (req, res, next) => {
     const partId = Number(req.params.id);
     const userId = res.locals.userId;
@@ -134,16 +134,18 @@ class PartController {
    * @route DELETE /api/cart/:partId
    * @returns Success message if the part is removed from the cart.
    */
-  public deletePartFromCart: ExpressHandlerWithParams<
-    { partId: number },
-    null,
-    {}
-  > = async (req, res, next) => {
-    const partId = Number(req.params.partId);
-    const userId = res.locals.userId;
-    await this.dao.deletePartFromCart({ userId, partId });
-    res.status(204).send();
-  };
+  // public deletePartFromCart: deletePartFromCartType = async (
+  //   req,
+  //   res,
+  //   next
+  // ) => {
+  //   const partId = Number(req.params.partId);
+  //   const userId = res.locals.userId;
+  //   await this.dao.deletePartFromCart({ userId, partId });
+  //   res.status(204).send();
+  // };
+
+  public updatePart: updatePartType = async (req, res, next) => {};
 
   /**
    * Extract filters from query parameters for part listing.
@@ -151,6 +153,17 @@ class PartController {
    * @param query - The query parameters from the request.
    * @returns An object containing valid filter fields.
    */
+
+  public deletePart: deletePartType = async (req, res, next) => {
+    const partId = Number(req.params.id);
+    const userId = res.locals.userId;
+    if (!partId) throw new AppError('the part is not exist', 404);
+    const part = await this.dao.getPart(partId);
+    if (!part || part.owner !== userId)
+      throw new AppError('you are not the owner of this part', 403);
+    await part.destroy();
+    res.status(204).send();
+  };
   private getFilterFromPrams(query: GetAllPartsPrams): filterFields {
     const result = { ...query };
     result.limit = result.sort = result.page = undefined;

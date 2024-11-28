@@ -9,11 +9,11 @@ import sequelize from '../../config/database';
 import User from './User';
 import AppError from '../../utils/AppError';
 class Part extends Model<InferAttributes<Part>, InferCreationAttributes<Part>> {
-  declare id: CreationOptional<number>; // like 1
+  declare id: CreationOptional<number>;
   declare owner: number;
-  declare carType: string; // nesan
-  declare category: string; // merorr
-  declare brand: string; // brand of the part
+  declare carType: string;
+  declare category: string;
+  declare brand: string;
   declare madeIn: string;
   declare year: Date;
   declare price: number;
@@ -21,6 +21,8 @@ class Part extends Model<InferAttributes<Part>, InferCreationAttributes<Part>> {
   declare mainPhoto: string;
   declare photos: string[] | undefined;
   declare stock: number;
+  declare country: string;
+  declare city: string;
 }
 
 Part.init(
@@ -88,6 +90,14 @@ Part.init(
     stock: {
       type: DataTypes.INTEGER,
       defaultValue: 1,
+    },
+    country: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {
