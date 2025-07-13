@@ -78,6 +78,8 @@ class PartController {
       mainPhoto,
       stock,
       photos = [],
+      country,
+      city,
     } = req.body;
     const owner: number = res.locals.userId;
 
@@ -90,7 +92,9 @@ class PartController {
       !madeIn ||
       !year ||
       !mainPhoto ||
-      !stock
+      !stock ||
+      !country ||
+      !city
     ) {
       throw new AppError(
         'Category, price, car type, status, brand, madeIn, year, and main photo are required',
@@ -110,6 +114,8 @@ class PartController {
       stock,
       photos,
       owner,
+      country,
+      city,
     });
     res.status(201).json({ part });
   };

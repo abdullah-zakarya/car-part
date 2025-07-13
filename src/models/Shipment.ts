@@ -6,7 +6,7 @@ import {
   DataTypes,
 } from 'sequelize';
 import sequelize from '../../config/database';
-import { Point, shipmentState } from '../../types/types';
+import { shipmentState, Address } from '../../types/types';
 
 class Shipment extends Model<
   InferAttributes<Shipment>,
@@ -14,11 +14,10 @@ class Shipment extends Model<
 > {
   declare id: CreationOptional<number>;
   declare customerId: number;
-  declare shipmentType: string;
-  declare status: shipmentState;
-  declare paymentMethod: string;
-  declare itemLocation: Point;
-  declare customerLocation: Point;
+  declare status: CreationOptional<shipmentState>;
+  declare customerLocation: Address;
+  declare sales: Number[];
+  declare cost: Number;
 }
 
 Shipment.init(
@@ -33,24 +32,20 @@ Shipment.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    shipmentType: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    itemLocation: {
-      type: DataTypes.STRING,
+    sales: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false,
     },
     status: {
       type: DataTypes.ENUM(...Object.values(shipmentState)),
       allowNull: false,
     },
-    paymentMethod: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     customerLocation: {
-      type: DataTypes.ARRAY(DataTypes.NUMBER),
+      type: DataTypes.JSON,
+    },
+    cost: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
     },
   },
   {
@@ -60,16 +55,3 @@ Shipment.init(
 );
 
 export default Shipment;
-// ---------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------------------------
-// ------------------------------------------------------  --  --  ---------------------------------------------------
-// ------------------------------------------------  --           --  ------------------------------------------------
-// -------------------------------------------                        --  ------------------------------------------
-// ---------------------------------------                               --  ---------------------------------------
-// ------------------------------------                                       ------------------------------------
-// ---------------------------------------                                 ---------------------------------------
-// -------------------------------------------                          ------------------------------------------
-// ------------------------------------------------               ------------------------------------------------
-// ----------------------------------------------------      -----------------------------------------------------
-// ---------------------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------------------------

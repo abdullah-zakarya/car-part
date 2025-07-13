@@ -1,11 +1,8 @@
 import { Op } from 'sequelize';
 import AppError from '../../utils/AppError';
 import Cart from '../models/Cart';
-import { getAllMyCartItemsType, getAllPartsType } from '../../types/partApi';
-import Part from '../models/Part';
 import sequelize from '../../config/database';
 import Sequelize from 'sequelize';
-import PartDao from '../parts/partsDao';
 
 class cartDao {
   model: typeof Cart;

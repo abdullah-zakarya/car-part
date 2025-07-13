@@ -10,8 +10,10 @@ import {
   CarTypeFilterStrategy,
   OriginalFilterStrategy,
 } from './filters';
+
 import Cart from '../models/Cart';
 import { filterFields } from '../../types/partsTypes';
+import { IPart } from '../../types/partApi';
 
 /**
  * PartDao class handles operations related to Part objects, such as fetching, adding, and filtering parts.
@@ -90,20 +92,7 @@ class PartDao {
    * @returns The newly created part.
    */
   public async addPart(
-    part: Pick<
-      Part,
-      | 'category'
-      | 'price'
-      | 'carType'
-      | 'new'
-      | 'brand'
-      | 'madeIn'
-      | 'year'
-      | 'mainPhoto'
-      | 'stock'
-      | 'owner'
-      | 'photos'
-    >
+    part: Omit<IPart, 'createdAt' | 'updatedAt' | 'id'>
   ): Promise<Part> {
     const newPart = await this.model.create(part);
     return newPart;
