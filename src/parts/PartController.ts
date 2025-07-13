@@ -8,6 +8,7 @@ import {
   GetAllPartsPrams,
   getAllPartsType,
   getPartType,
+  IPart,
   updatePartType,
 } from './../../types/partApi';
 import { ExpressHandlerWithParams } from '../../types/types';
@@ -67,56 +68,9 @@ class PartController {
    * @returns The newly added part.
    */
   public addPart: addPartType = async (req, res, next) => {
-    const {
-      category,
-      price,
-      carType,
-      new: isNew,
-      brand,
-      madeIn,
-      year,
-      mainPhoto,
-      stock,
-      photos = [],
-      country,
-      city,
-    } = req.body;
-    const owner: number = res.locals.userId;
+    const newPart = { ...req.body, owner: res.locals.userId };
 
-    if (
-      !category ||
-      !price ||
-      !carType ||
-      isNew === undefined ||
-      !brand ||
-      !madeIn ||
-      !year ||
-      !mainPhoto ||
-      !stock ||
-      !country ||
-      !city
-    ) {
-      throw new AppError(
-        'Category, price, car type, status, brand, madeIn, year, and main photo are required',
-        400
-      );
-    }
-
-    const part = await this.dao.addPart({
-      category,
-      price,
-      carType,
-      new: isNew,
-      brand,
-      madeIn,
-      year,
-      mainPhoto,
-      stock,
-      photos,
-      owner,
-      country,
-      city,
-    });
+    const part = await this.dao.addPart(newPart);
     res.status(201).json({ part });
   };
 
