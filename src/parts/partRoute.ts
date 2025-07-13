@@ -2,6 +2,7 @@ import { Router } from 'express';
 import PartController from './PartController';
 import isLogin from '../../utils/isLogin';
 import { catchAsync, catchErr } from '../../utils/catchErrors';
+import { addPartValidation } from './PartsValidations';
 
 const router = Router();
 const partController = new PartController();
@@ -22,7 +23,7 @@ router.get('/', catchErr(partController.getAllParts));
  * @description Add a new part to the database.
  */
 router.use(isLogin);
-router.post('/', catchAsync(partController.addPart));
+router.post('/', addPartValidation, catchAsync(partController.addPart));
 
 /**
  * @route POST /api/cart/:id
