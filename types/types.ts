@@ -34,10 +34,10 @@ export type Point = {
   y: number;
 };
 export enum shipmentState {
-  inSellerStock = 1,
-  inStock = 2,
-  shipping = 3,
-  arrive = 4,
+  inSellerStock = 'in-seller-stock',
+  inStock = 'in-stock',
+  shipping = 'shipping',
+  done = 'done',
 }
 export enum ShipmentStatus {
   STOCK = 'stock',
@@ -50,4 +50,8 @@ export type Address = {
   city: string;
   street: string;
   home?: string;
+};
+export type orderCreation = {
+  sales: { partId: number; quantity: number }[];
+  address: Address;
 };

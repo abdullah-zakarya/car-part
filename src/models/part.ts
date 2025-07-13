@@ -8,7 +8,26 @@ import {
 import sequelize from '../../config/database';
 import User from './User';
 import AppError from '../../utils/AppError';
-class Part extends Model<InferAttributes<Part>, InferCreationAttributes<Part>> {
+interface IPart {
+  id: number;
+  owner: number;
+  carType: string;
+  category: string;
+  brand: string;
+  madeIn: string;
+  year: Date;
+  price: number;
+  new: boolean;
+  mainPhoto: string;
+  photos: string[] | undefined;
+  stock: number;
+  country: string;
+  city: string;
+}
+class Part
+  extends Model<InferAttributes<Part>, InferCreationAttributes<Part>>
+  implements IPart
+{
   declare id: CreationOptional<number>;
   declare owner: number;
   declare carType: string;

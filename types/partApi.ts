@@ -1,3 +1,4 @@
+import { InferAttributes } from 'sequelize';
 import Cart from '../src/models/Cart';
 import Part from '../src/models/Part';
 import { getOnePartResponse } from './chatApi';
@@ -37,19 +38,8 @@ export type getAllPartsType = ExpressHandlerWithParams<
   {},
   getAllPartsResponse
 >;
-export type addPartRequest = Pick<
-  Part,
-  | 'category'
-  | 'price'
-  | 'carType'
-  | 'new'
-  | 'brand'
-  | 'madeIn'
-  | 'year'
-  | 'mainPhoto'
-  | 'stock'
-  | 'photos'
->;
+export type IPart = InferAttributes<Part>;
+export type addPartRequest = Omit<IPart, 'id'>;
 export type addPartType = ExpressHandler<addPartRequest, { part: Part }>;
 export type addPartToCartType = ExpressHandlerWithParams<
   { id: number },

@@ -5,6 +5,8 @@ import chatRouter from './src/chat/chatRoute';
 import errorHandler from './utils/errorHandler';
 import partRoute from './src/parts/partRoute';
 
+console.log('from app.ts');
+
 const app = express();
 app.use(express.json());
 
