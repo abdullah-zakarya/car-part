@@ -1,6 +1,6 @@
 import {
   normalLoginType,
-  normalsignupType,
+  normalSignupType,
   forgotPasswordType,
   resetPasswordType,
   showMeType,
@@ -25,17 +25,8 @@ class AuthController {
    * @route POST /api/v1/user/signup
    * @access Public
    */
-  public normalsignup: normalsignupType = async (req, res, next) => {
+  public normalSignup: normalSignupType = async (req, res, next) => {
     const { name, password, email, gender = Gender.male } = req.body;
-    // validation
-    if (!name || !email || !password)
-      return next(new AppError('All fields are required', 403));
-
-    if (!isEmail(email)) throw new AppError('this email is not valid', 403);
-
-    if (password.length < 8)
-      throw new AppError('the password should be more than 7 letters', 403);
-
     const {
       user: { id },
       token,
@@ -59,13 +50,10 @@ class AuthController {
    */
   public normalLogin: normalLoginType = async (req, res, next) => {
     const { email, password } = req.body;
-    if (!email || !password)
-      return next(new AppError('Email and password are required', 403));
     const {
       user: { name, gender, id },
       token,
     } = await this.dao.login('normal', { email, password });
-
     res.status(200).json({
       user: { email, name, gender, id },
       jwt: token,
@@ -91,9 +79,6 @@ class AuthController {
    */
   public resetPassword: resetPasswordType = async (req, res, next) => {
     const { email, resetCode, newPassword } = req.body;
-    if (!email || !resetCode || !newPassword)
-      throw new AppError('All fields are required', 403);
-
     const token = await this.dao.resetPassword({
       email,
       resetCode,
@@ -104,7 +89,7 @@ class AuthController {
 
   /**
    * @description Get authenticated user details.
-   * @route GET /apiv1/user/me
+   * @route GET /api/v1/user/me
    * @access Private
    */
 

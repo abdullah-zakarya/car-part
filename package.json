@@ -6,6 +6,9 @@
   "scripts": {
     "start": "nodemon server.ts ",
     "test": "jest",
+    "test:users": "npx jest ./__test__/user.test.ts",
+    "test:parts": "npx jest ./__test__/parts.test.ts",
+    "test:chats": "npx jest ./__test__/chat.test.ts",
     "migrate": "npx sequelize-cli db:migrate"
   },
   "keywords": [],
