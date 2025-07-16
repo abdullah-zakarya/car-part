@@ -2,6 +2,13 @@ import { Router } from 'express';
 import AuthController from './authController';
 import isLogin from '../../utils/isLogin'; // Reusing isLogin as middleware for JWT verification
 import { catchAsync } from '../../utils/catchErrors';
+import {
+  forgotPasswordValidation,
+  loginValidation,
+  resetPasswordValidation,
+  signupValidation,
+  updateMeValidation,
+} from './authValidations';
 
 const router = Router();
 const authController = new AuthController();
@@ -12,14 +19,18 @@ const authController = new AuthController();
  * @desc    User signup using normal authentication
  * @access  Public
  */
-router.post('/signup', catchAsync(authController.normalsignup));
+router.post(
+  '/signup',
+  signupValidation,
+  catchAsync(authController.normalSignup)
+);
 
 /**
  * @route   POST /api/auth/login
  * @desc    User login using normal authentication
  * @access  Public
  */
-router.post('/login', catchAsync(authController.normalLogin));
+router.post('/login', loginValidation, catchAsync(authController.normalLogin));
 
 // Routes for password reset and recovery
 /**
@@ -27,14 +38,22 @@ router.post('/login', catchAsync(authController.normalLogin));
  * @desc    Sends a password reset code to user's email
  * @access  Public
  */
-router.post('/forgot-password', catchAsync(authController.forgotPassword));
+router.post(
+  '/forgot-password',
+  forgotPasswordValidation,
+  catchAsync(authController.forgotPassword)
+);
 
 /**
  * @route   POST /api/auth/reset-password
  * @desc    Resets user's password using a reset code
  * @access  Public
  */
-router.post('/reset-password', catchAsync(authController.resetPassword));
+router.post(
+  '/reset-password',
+  resetPasswordValidation,
+  catchAsync(authController.resetPassword)
+);
 
 // Protected routes that require JWT verification
 /**
@@ -50,7 +69,11 @@ router.get('/me', catchAsync(authController.showMe));
  * @desc    Verify if user is logged in (valid JWT)
  * @access  Private
  */
-router.put('/update-me', catchAsync(authController.updateMe));
+router.put(
+  '/update-me',
+  updateMeValidation,
+  catchAsync(authController.updateMe)
+);
 /**
  * @route   DELETE /api/auth/me
  * @desc    Delete current user's account

@@ -10,7 +10,7 @@ type normalLoginResponse = {
 type loginRequest = normalLoginRequest;
 type loginResponse = normalLoginResponse;
 
-type NormalSignUpRequest = Pick<User, 'email' | 'name' | 'password' | 'gender'>;
+type normalSignupRequest = Pick<User, 'email' | 'name' | 'password' | 'gender'>;
 interface SignUpResponse {
   jwt: string;
   user: Pick<User, 'name' | 'email' | 'gender' | 'id'>;
@@ -48,8 +48,8 @@ interface deleteMeResponse {
   message: string;
 }
 
-export type normalsignupType = ExpressHandler<
-  NormalSignUpRequest,
+export type normalSignupType = ExpressHandler<
+  normalSignupRequest,
   SignUpResponse
 >;
 export type normalLoginType = ExpressHandler<

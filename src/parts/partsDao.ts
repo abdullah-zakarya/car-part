@@ -66,12 +66,6 @@ class PartDao {
       const queryFilters = this.filterFactory(filters);
       const orderDirection = sort && sort[0] === '-' ? 'DESC' : 'ASC';
       const field = sort && sort[0] == '-' ? sort.slice(1) : 'createdAt';
-      console.log({
-        where: queryFilters,
-        order: [[field, orderDirection]],
-        limit,
-        offset: (page - 1) * limit,
-      });
       const parts = await this.model.findAll({
         where: queryFilters,
         order: [[field, orderDirection]],

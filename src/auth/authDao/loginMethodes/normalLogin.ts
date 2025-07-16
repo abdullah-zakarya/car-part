@@ -24,8 +24,11 @@ export default class NormalLogin implements ILoginMethod {
   }
 
   async signup(user: User): Promise<User> {
+    console.log('user', user);
+
     user.password = await this.encryptPassword(user.password);
     const newUser = await User.create(user);
+    console.log('newUser', newUser);
     if (!newUser) throw new AppError('Failed to create user', 500);
     return newUser;
   }

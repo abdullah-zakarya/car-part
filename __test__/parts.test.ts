@@ -42,12 +42,15 @@ describe('Parts API Testing', () => {
 
   beforeAll(async () => {
     // Sign up a user for authenticated routes
+
     const response = await auth.signup('normal', {
       name: 'ahmed',
       email: 'ahmed@gmail.com',
       password: 'password',
       gender: Gender.male,
     });
+    console.log('response', response);
+
     user = response.user;
     token = response.token;
   });
@@ -65,7 +68,6 @@ describe('Parts API Testing', () => {
      *
      * @returns {void} - This function does not return a value.
      */
-    console.log('from add prat api testing');
     it('should add a part successfully', async () => {
       const response = await request(app)
         .post('/api/v1/parts')
@@ -82,7 +84,6 @@ describe('Parts API Testing', () => {
           stock: 10,
           photos: ['photo1_url', 'photo2_url'],
         });
-      console.log(response);
       expect(response.status).toBe(201);
       expect(response.body.part).toHaveProperty('id');
       expect(response.body.part).toHaveProperty('category', 'engine');
