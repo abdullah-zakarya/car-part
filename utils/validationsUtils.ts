@@ -1,35 +1,78 @@
 import Joi from 'joi';
 import AppError from './AppError';
+
 const createValidationsMiddleware = (
   validations: Record<string, Joi.Schema>, //
   requires: string[] = [],
-  optionals: string[] = []
+  optionals: string[] = [],
+  pramsRequires: string[] = [],
+  pramsOptional: string[] = []
 ) => {
-  const joiValidator: Record<string, Joi.Schema> = {};
+  const bodyValidators: Record<string, Joi.Schema> = {};
+  const paramsValidators: Record<string, Joi.Schema> = {};
 
+  // Required body fields
   for (const field of requires) {
     if (validations[field]) {
-      joiValidator[field] = validations[field].required();
+      bodyValidators[field] = validations[field].required();
     }
   }
 
+  // Optional body fields
   for (const field of optionals) {
     if (validations[field]) {
-      joiValidator[field] = validations[field].optional();
+      bodyValidators[field] = validations[field].optional();
     }
   }
 
-  const schema = Joi.object(joiValidator);
+  // Required params fields
+  for (const field of pramsRequires) {
+    if (validations[field]) {
+      paramsValidators[field] = validations[field].required();
+    }
+  }
+
+  // Optional params fields
+  for (const field of pramsOptional) {
+    if (validations[field]) {
+      paramsValidators[field] = validations[field].optional();
+    }
+  }
+
+  const bodySchema = Joi.object(bodyValidators);
+  const paramsSchema = Joi.object(paramsValidators);
 
   return (req: any, res: any, next: any) => {
-    const { error, value } = schema.validate(req.body, { abortEarly: false });
+    // Validate body
+    const { error: bodyError, value: validatedBody } = bodySchema.validate(
+      req.body,
+      {
+        abortEarly: false,
+        stripUnknown: true,
+      }
+    );
 
-    if (error) {
-      const messages = error.details.map((d) => d.message).join(', ');
+    if (bodyError) {
+      const messages = bodyError.details.map((d) => d.message).join(', ');
       return next(new AppError(messages, 400));
     }
 
-    req.validatedBody = value;
+    // Validate params
+    const { error: paramsError, value: validatedParams } =
+      paramsSchema.validate(req.params, {
+        abortEarly: false,
+        stripUnknown: true,
+      });
+
+    if (paramsError) {
+      const messages = paramsError.details.map((d) => d.message).join(', ');
+      return next(new AppError(messages, 400));
+    }
+
+    // Attach validated data to request
+    req.validatedBody = validatedBody;
+    req.validatedParams = validatedParams;
+
     next();
   };
 };

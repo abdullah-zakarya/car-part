@@ -34,16 +34,9 @@ class ChatController {
   public sendMessage: sendMessageType = async (req, res, next) => {
     let { receiverId, message } = req.body;
     const senderId = res.locals.userId;
-    receiverId = Number(receiverId);
-
-    if (!receiverId || !message)
-      return next(new AppError('Receiver and message are required', 403));
-
     const receiver = await User.findByPk(receiverId);
     if (!receiver) return next(new AppError('This user does not exist', 404));
-
     sendMessage({ senderId, receiverId, message });
-
     const newMessage = await this.dao.send({
       senderId,
       receiverId,

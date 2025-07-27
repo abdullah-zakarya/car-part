@@ -30,7 +30,7 @@ describe('UserAuth', () => {
       user = result.user;
       token = result.token;
 
-      comparFileds(userData, user, 'name', 'email', 'gender');
+      compareFields(userData, user, 'name', 'email', 'gender');
       expect(result.token).toBeDefined();
     });
 
@@ -184,7 +184,7 @@ describe('UserAuth', () => {
   });
 
   // Helper function for field comparison
-  function comparFileds(
+  function compareFields(
     obj1: { [key: string]: any },
     obj2: { [key: string]: any },
     ...fields: string[]
