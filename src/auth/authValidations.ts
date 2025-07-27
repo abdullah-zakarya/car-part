@@ -1,5 +1,4 @@
-import Joi, { object, string } from 'joi';
-import { CarType, Category } from '../../types/partsTypes';
+import Joi from 'joi';
 import AppError from '../../utils/AppError';
 import createValidationsMiddleware from '../../utils/validationsUtils';
 
