@@ -4,6 +4,7 @@ import { ExpressHandler } from '../types/types';
 import loginChick from './loginCheck';
 import { catchAsync } from './catchErrors';
 import { isLoginType } from '../types/authApi';
+import { HttpStatusCode } from 'axios';
 
 /**
  * Middleware to protect routes by verifying JWT
@@ -13,7 +14,7 @@ import { isLoginType } from '../types/authApi';
 
 const isLogin: isLoginType = catchAsync(async (req, res, next) => {
   const auth = req.headers.authorization;
-  if (!auth) throw new AppError('Authorization header is missing', 401);
+  if (!auth) throw new AppError('Authorization header is missing', HttpStatusCode.Unauthorized);
   const [tokenType, token] = auth.split(' ');
   if (tokenType !== 'Bearer' || !token)
     return next(new AppError('Token is required', 401));

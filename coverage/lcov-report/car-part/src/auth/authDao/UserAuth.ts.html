@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">32.78% </span>
+                <span class="strong">45.9% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>40/122</span>
+                <span class='fraction'>56/122</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>4/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">8.33% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/12</span>
+                <span class='fraction'>4/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">32.78% </span>
+                <span class="strong">45.9% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>40/122</span>
+                <span class='fraction'>56/122</span>
             </div>
         
             
@@ -203,10 +203,10 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -220,20 +220,20 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -324,11 +324,11 @@ class UserAuth {
     google: GoogleOAuth,
   };
 &nbsp;
-  private <span class="fstat-no" title="function not covered" >getLoginMethod(method: string): ILoginMethod {</span>
-<span class="cstat-no" title="statement not covered" >    const LoginMethod = UserAuth.LOGIN_METHODS[method];</span>
-<span class="cstat-no" title="statement not covered" >    if (!LoginMethod) throw new AppError('This method does not exist yet');</span>
-<span class="cstat-no" title="statement not covered" >    return new LoginMethod();</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+  private getLoginMethod(method: string): ILoginMethod {
+    const LoginMethod = UserAuth.LOGIN_METHODS[method];
+    if (!LoginMethod) <span class="branch-0 cbranch-no" title="branch not covered" >throw new AppError('This method does not exist yet');</span>
+    return new LoginMethod();
+  }
 &nbsp;
   private <span class="fstat-no" title="function not covered" >allowsField(</span>
 <span class="cstat-no" title="statement not covered" >    obj: { [key: string]: any },</span>
@@ -341,21 +341,21 @@ class UserAuth {
 <span class="cstat-no" title="statement not covered" >    return result;</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
 &nbsp;
-  private <span class="fstat-no" title="function not covered" >createToken(userId: number): string {</span>
-<span class="cstat-no" title="statement not covered" >    return jwt.sign({ id: userId }, process.env.JWT_SECRET!, {</span>
-<span class="cstat-no" title="statement not covered" >      expiresIn: '3d',</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+  private createToken(userId: number): string {
+    return jwt.sign({ id: userId }, process.env.JWT_SECRET!, {
+      expiresIn: '3d',
+    });
+  }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  async signup(</span>
-<span class="cstat-no" title="statement not covered" >    method: string,</span>
-<span class="cstat-no" title="statement not covered" >    info: {}</span>
-<span class="cstat-no" title="statement not covered" >  ): Promise&lt;{ user: User; token: string }&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    const loginMethod = this.getLoginMethod(method);</span>
-<span class="cstat-no" title="statement not covered" >    const user = await loginMethod.signup(info);</span>
-<span class="cstat-no" title="statement not covered" >    const token = this.createToken(user.id);</span>
-<span class="cstat-no" title="statement not covered" >    return { user, token };</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+  async signup(
+    method: string,
+    info: {}
+  ): Promise&lt;{ user: User; token: string }&gt; {
+    const loginMethod = this.getLoginMethod(method);
+    const user = await loginMethod.signup(info);
+    const token = this.createToken(user.id);
+    return { user, token };
+  }
 &nbsp;
 <span class="fstat-no" title="function not covered" >  async login(</span>
 <span class="cstat-no" title="statement not covered" >    method: string,</span>
@@ -436,7 +436,7 @@ export default UserAuth;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-29T04:52:36.013Z
+                at 2025-07-30T08:40:55.193Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

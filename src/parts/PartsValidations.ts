@@ -1,7 +1,8 @@
-import Joi, { object } from 'joi';
+import Joi, { object, optional } from 'joi';
 import { CarType, Category } from '../../types/partsTypes';
 import AppError from '../../utils/AppError';
 import createValidationsMiddleware from '../../utils/validationsUtils';
+import { DATE } from 'sequelize';
 
 const PartsFelidsValidation = {
   name: Joi.string()
@@ -26,6 +27,7 @@ const PartsFelidsValidation = {
   stock: Joi.number().min(1).message('quantity must be at least 1'),
   carType: Joi.string().custom((value) => {
     if (!Object.values(CarType).includes(value)) {
+      console.log(Object.values(CarType));
       throw new AppError('invalid car type', 403);
     }
     return value;
@@ -34,11 +36,14 @@ const PartsFelidsValidation = {
   original: Joi.boolean(),
   photos: Joi.array().items(Joi.string()),
   mainPhoto: Joi.string(),
-  year: Joi.number().min(1950).max(new Date().getFullYear()),
+  year: Joi.date().min(new Date('1970-01-01')).max(new Date("2025-12-31")),
   madeIn: Joi.string(),
   brand: Joi.string(),
   country: Joi.string(),
   city: Joi.string(),
+  limit: Joi.number().min(1).max(100).default(10),  
+  page: Joi.number().min(1).default(1),
+  sort: Joi.string().valid('price', '-price', 'name', '-name').default('price'),
 };
 
 export const addPartValidation = createValidationsMiddleware(
@@ -55,7 +60,7 @@ export const addPartValidation = createValidationsMiddleware(
     'city',
     'new',
   ],
-  ['photos', 'stock']
+  ['photos', 'stock'],[],[],['sort', 'page', 'limit']
 );
 export const updatePartValidation = createValidationsMiddleware(
   PartsFelidsValidation,

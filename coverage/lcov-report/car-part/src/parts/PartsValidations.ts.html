@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90.12% </span>
+                <span class="strong">95.34% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>73/81</span>
+                <span class='fraction'>82/86</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>2/4</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90.12% </span>
+                <span class="strong">95.34% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>73/81</span>
+                <span class='fraction'>82/86</span>
             </div>
         
             
@@ -144,7 +144,28 @@
 <a name='L79'></a><a href='#L79'>79</a>
 <a name='L80'></a><a href='#L80'>80</a>
 <a name='L81'></a><a href='#L81'>81</a>
-<a name='L82'></a><a href='#L82'>82</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -159,22 +180,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -225,10 +230,14 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import Joi, { object } from 'joi';
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import Joi, { object, optional } from 'joi';
 import { CarType, Category } from '../../types/partsTypes';
 import AppError from '../../utils/AppError';
 import createValidationsMiddleware from '../../utils/validationsUtils';
+import { DATE } from 'sequelize';
 &nbsp;
 const PartsFelidsValidation = {
   name: Joi.string()
@@ -237,10 +246,10 @@ const PartsFelidsValidation = {
     .min(3)
     .message('name must be at least 3 characters long'),
   category: Joi.string().custom((value) =&gt; {
-<span class="cstat-no" title="statement not covered" >    if (Object.values(Category).includes(value)) {</span>
-<span class="cstat-no" title="statement not covered" >      return value;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >    throw new AppError('invalid category', 403);</span>
+    if (Object.values(Category).includes(value)) {
+      return value;
+    }
+<span class="cstat-no" title="statement not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >    throw new AppError('invalid category', 403);</span></span>
   }),
   image: Joi.string().max(300),
   description: Joi.string()
@@ -252,20 +261,24 @@ const PartsFelidsValidation = {
   price: Joi.number().min(0).message('price must be at least 0'),
   stock: Joi.number().min(1).message('quantity must be at least 1'),
   carType: Joi.string().custom((value) =&gt; {
-<span class="cstat-no" title="statement not covered" >    if (!Object.values(CarType).includes(value)) {</span>
+    if (!Object.values(CarType).includes(value)) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >      console.log(Object.values(CarType));</span>
 <span class="cstat-no" title="statement not covered" >      throw new AppError('invalid car type', 403);</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >    return value;</span>
+    return value;
   }),
   new: Joi.boolean(),
   original: Joi.boolean(),
   photos: Joi.array().items(Joi.string()),
   mainPhoto: Joi.string(),
-  year: Joi.number().min(1950).max(new Date().getFullYear()),
+  year: Joi.date().min(new Date('1970-01-01')).max(new Date("2025-12-31")),
   madeIn: Joi.string(),
   brand: Joi.string(),
   country: Joi.string(),
   city: Joi.string(),
+  limit: Joi.number().min(1).max(100).default(10),  
+  page: Joi.number().min(1).default(1),
+  sort: Joi.string().valid('price', '-price', 'name', '-name').default('price'),
 };
 &nbsp;
 export const addPartValidation = createValidationsMiddleware(
@@ -282,7 +295,7 @@ export const addPartValidation = createValidationsMiddleware(
     'city',
     'new',
   ],
-  ['photos', 'stock']
+  ['photos', 'stock'],[],[],['sort', 'page', 'limit']
 );
 export const updatePartValidation = createValidationsMiddleware(
   PartsFelidsValidation,
@@ -305,15 +318,14 @@ export const updatePartValidation = createValidationsMiddleware(
     'quantity',
     'carType',
   ]
-);
-&nbsp;</pre></td></tr></table></pre>
+);</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-29T04:52:36.013Z
+                at 2025-07-30T08:40:55.193Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
