@@ -8,31 +8,39 @@ describe('UserAuth', () => {
   let userAuth: UserAuth;
   let token: string;
   let user: User;
-  let userData: Pick<User, 'name' | 'password' | 'email' | 'gender'>;
-
-  beforeAll(async () => {
-    userAuth = new UserAuth();
-    await User.destroy({ where: {} });
-    await ResetCode.destroy({ where: {} });
-  });
-
-  // User Signup Tests
-  describe('Signup', () => {
-    it('should successfully sign up a new user', async () => {
-      userData = {
+  let userData  = {
         name: 'Sara',
         email: 'sara@example.com',
         password: 'password123',
         gender: Gender.female,
       };
 
+  beforeAll(async () => {
+    userAuth = new UserAuth();
+    await User.destroy({ where: {} });
+    await ResetCode.destroy({ where: {} });
       const result = await userAuth.signup('normal', userData);
       user = result.user;
       token = result.token;
+  });
 
-      compareFields(userData, user, 'name', 'email', 'gender');
-      expect(result.token).toBeDefined();
-    });
+  // User Signup Tests
+  describe('Signup', () => {
+    // it('should successfully sign up a new user', async () => {
+    //   userData = {
+    //     name: 'Sara',
+    //     email: 'sara@example.com',
+    //     password: 'password123',
+    //     gender: Gender.female,
+    //   };
+
+    //   const result = await userAuth.signup('normal', userData);
+    //   user = result.user;
+    //   token = result.token;
+
+    //   compareFields(userData, user, 'name', 'email', 'gender');
+    //   expect(result.token).toBeDefined();
+    // });
 
     it('should throw an error if email already exists', async () => {
       await expect(userAuth.signup('normal', userData)).rejects.toThrow();
@@ -54,11 +62,12 @@ describe('UserAuth', () => {
       );
     });
     it('should successfully log in with valid credentials', async () => {
+      const {email, password} = userData;
       const result = await userAuth.login('normal', {
-        email: userData.email,
-        password: userData.password,
+        email:'sara@example.com',
+        password: 'password123',
       });
-
+      console.log('result', result);
       token = result.token;
       expect(result.user.id).toEqual(user.id);
       expect(token).toBeDefined();

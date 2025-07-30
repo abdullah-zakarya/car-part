@@ -25,13 +25,11 @@ const categories = new Set<string>(Object.values(Category));
 const cartTypes = new Set<string>(Object.keys(CarType));
 class CategoryFilterStrategy implements FilterStrategy {
   applyFilter(filterValue: string): any {
-    console.log(filterValue.split(','));
     const values = filterValue.split(',').map((el) => el.toLowerCase());
     values.forEach((el) => {
       if (!categories.has(el))
         throw new AppError('invalid category filter', 403);
     });
-    console.log(values);
     return values.length > 1 ? { [Op.or]: values } : values[0];
   }
 }
