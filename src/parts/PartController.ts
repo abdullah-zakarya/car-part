@@ -14,6 +14,8 @@ import {
 import { ExpressHandlerWithParams } from '../../types/types';
 import { catchError } from '../../utils/catchErrors';
 import { filterFields } from '../../types/partsTypes';
+import { number } from 'joi';
+import { HttpStatusCode } from 'axios';
 
 /**
  * PartController handles requests related to 'Part' such as fetching, adding, and managing parts in the cart.
@@ -37,7 +39,7 @@ class PartController {
 
   public getPart: getPartType = async (req, res, next) => {
     const { id } = req.params;
-    if (!Number(id)) return next(new AppError('Invalid Part ID', 403));
+    if(!Number(id)) throw new AppError('Invalid part ID', HttpStatusCode.BadRequest);
     const part = await this.dao.getPart(Number(id));
     if (!part) throw new AppError('Part not found', 404);
     res.status(200).json({ part });
@@ -85,7 +87,7 @@ class PartController {
     const partId = Number(req.params.id);
     const userId = res.locals.userId;
     await this.dao.addPartToCart({ partId, userId });
-    res.status(204).send();
+    res.status(HttpStatusCode.Accepted).send();
   };
 
   /**

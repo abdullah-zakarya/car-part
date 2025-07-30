@@ -2,7 +2,7 @@ import ILoginMethod from './ILoginMethod';
 import User from '../../../models/User';
 import AppError from '../../../../utils/AppError';
 import bcrypt from 'bcrypt';
-
+import { HttpStatusCode } from 'axios';
 export default class NormalLogin implements ILoginMethod {
   private async encryptPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
@@ -19,9 +19,9 @@ export default class NormalLogin implements ILoginMethod {
   }): Promise<User> {
     const user = await User.findOne({ where: { email } });
 
-    if(!user) throw new AppError('Invalid credentials', 403);
+    if(!user) throw new AppError('Invalid credentials', HttpStatusCode.Forbidden);
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) throw new AppError('Invalid credentials', 403);
+    if (!isMatch) throw new AppError('Invalid credentials', HttpStatusCode.Forbidden);
     return user;
   }
 
@@ -29,7 +29,10 @@ export default class NormalLogin implements ILoginMethod {
 
     user.password = await this.encryptPassword(user.password);
     const newUser = await User.create(user);
-    if (!newUser) throw new AppError('Failed to create user', 500);
+    if (!newUser) {
+      console.error('Failed to create user:', newUser);
+      throw new AppError('Failed to create user', HttpStatusCode.InternalServerError);
+    };
     return newUser;
   }
 

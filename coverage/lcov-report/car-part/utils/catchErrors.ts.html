@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">41.42% </span>
+                <span class="strong">57.14% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>29/70</span>
+                <span class='fraction'>40/70</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">60% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/5</span>
+                <span class='fraction'>4/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">41.42% </span>
+                <span class="strong">57.14% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>29/70</span>
+                <span class='fraction'>40/70</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -171,12 +171,12 @@
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -193,11 +193,11 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -241,12 +241,12 @@ function catchAsync&lt;reqT, resT&gt;(
   fn: ExpressHandler&lt;reqT, resT&gt;
 ): ExpressHandler&lt;reqT, resT&gt; {
   return async function (req, res, next) {
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >      await fn(req, res, next);</span>
-<span class="cstat-no" title="statement not covered" >    } catch (err) {</span>
-<span class="cstat-no" title="statement not covered" >      console.log('from function', fn.name);</span>
-<span class="cstat-no" title="statement not covered" >      next(err);</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+    try {
+      await fn(req, res, next);
+    } catch (err) {
+      console.log('from function', fn.name);
+      next(err);
+    }
   };
 }
 function catchPrams&lt;paramT, reqT, resT&gt;(
@@ -262,12 +262,12 @@ function catchPrams&lt;paramT, reqT, resT&gt;(
 }
 &nbsp;
 const catchErr = (fn: RequestHandler) =&gt; {
-  const result: RequestHandler = <span class="fstat-no" title="function not covered" >async (req, res, next) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >      await fn(req, res, next);</span>
-<span class="cstat-no" title="statement not covered" >    } catch (err) {</span>
-<span class="cstat-no" title="statement not covered" >      next(err);</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+  const result: RequestHandler = async (req, res, next) =&gt; {
+    try {
+      await fn(req, res, next);
+    } catch (err) {
+      next(err);
+    }
   };
   return result;
 };
@@ -280,7 +280,7 @@ export { catchAsync, catchError, catchPrams, catchErr };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-29T04:52:36.013Z
+                at 2025-07-30T08:40:55.193Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
