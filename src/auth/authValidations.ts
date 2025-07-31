@@ -18,26 +18,16 @@ const authFelidsValidation = {
   resetCode: Joi.string().length(6),
   userId: Joi.string().max(24).min(1),
 };
-
-export const signupValidation = createValidationsMiddleware(
-  authFelidsValidation,
-  ['name', 'email', 'password'],
-  ['role', 'gender']
+const authValidation = new createValidationsMiddleware(authFelidsValidation);
+export const signupValidation = authValidation.createMiddleware({
+  requiredBody:['name', 'email', 'password'],
+  optionalBody:['role', 'gender']
+}
 );
-export const loginValidation = createValidationsMiddleware(
-  authFelidsValidation,
-  ['email', 'password']
+export const loginValidation = authValidation.createMiddleware({requiredBody:['email', 'password']});
+export const updateMeValidation =authValidation.createMiddleware({ requiredBody:['name', 'email', 'gender']}
 );
-export const updateMeValidation = createValidationsMiddleware(
-  authFelidsValidation,
-  [],
-  ['name', 'email', 'gender']
-);
-export const forgotPasswordValidation = createValidationsMiddleware(
-  authFelidsValidation,
-  ['email']
-);
-export const resetPasswordValidation = createValidationsMiddleware(
-  authFelidsValidation,
-  ['newPassword', 'resetCode', 'email']
+export const forgotPasswordValidation =authValidation.createMiddleware({requiredBody:['email']});
+export const resetPasswordValidation = authValidation.createMiddleware(
+  {requiredBody:['newPassword', 'resetCode', 'email']}
 );

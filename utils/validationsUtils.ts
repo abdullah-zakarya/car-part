@@ -1,98 +1,90 @@
 import Joi from 'joi';
 import AppError from './AppError';
 import { HttpStatusCode } from 'axios';
+import { Request, Response, NextFunction } from 'express';
 
-const createValidationsMiddleware = (
-  validations: Record<string, Joi.Schema>, //
-  requires: string[] = [],
-  optionals: string[] = [],
-  pramsRequires: string[] = [],
-  pramsOptional: string[] = [],
-  queryOptional: string[] = []
-) => {
-  const bodyValidators: Record<string, Joi.Schema> = {};
-  const paramsValidators: Record<string, Joi.Schema> = {};
+export enum sections {
+  requiredParams = 'requiredParams',
+  optionalParams = 'optionalParams',
+  requiredBody = 'requiredBody',
+  optionalBody = 'optionalBody',
+  optionalQuery = 'optionalQuery',
+}
 
-  // Required body fields
-  for (const field of requires) {
-    if (validations[field]) {
-      bodyValidators[field] = validations[field].required();
-    }
+class validationsUtils<
+  T extends Record<string, Joi.Schema>,
+  S extends Partial<Record<sections, (keyof T)[]>>
+> {
+  constructor(private validations: T) { }
+
+  // middleware factory
+  createMiddleware(fields: S) {
+    const bodySchema = Joi.object({
+      ...this.validateSection(fields[sections.requiredBody], true),
+      ...this.validateSection(fields[sections.optionalBody], false),
+    });
+
+    const paramsSchema = Joi.object({
+      ...this.validateSection(fields[sections.requiredParams], true),
+      ...this.validateSection(fields[sections.optionalParams], false),
+    });
+
+    const querySchema = Joi.object({
+      ...this.validateSection(fields[sections.optionalQuery], false),
+    });
+
+    return (req: any, res: any, next: any) => {
+      // Validate body
+      const bodyResult = this.validateAndAssign(bodySchema, req.body, 'validatedBody', req);
+      if (bodyResult) return next(new AppError(bodyResult, HttpStatusCode.BadRequest));
+      // Validate params
+      const paramsResult = this.validateAndAssign(paramsSchema, req.params, 'validatedParams', req);
+      if (paramsResult) return next(new AppError(paramsResult, HttpStatusCode.BadRequest));
+      // Validate query
+      const queryResult = this.validateAndAssign(querySchema, req.query, 'validatedQuery', req);
+      if (queryResult) return next(new AppError(queryResult, HttpStatusCode.BadRequest));
+
+      next();
+    };
+
   }
 
-  // Optional body fields
-  for (const field of optionals) {
-    if (validations[field]) {
-      bodyValidators[field] = validations[field].optional();
-    }
-  }
+  private validateSection(
+    fields: (keyof T)[] | undefined,
+    isRequired: boolean
+  ): Record<string, Joi.Schema> {
+    const schema: Record<string, Joi.Schema> = {};
 
-  // Required params fields
-  for (const field of pramsRequires) {
-    if (validations[field]) {
-      paramsValidators[field] = validations[field].required();
-    }
-  }
-
-  // Optional params fields
-  for (const field of pramsOptional) {
-    if (validations[field]) {
-      paramsValidators[field] = validations[field].optional();
-    }
-  }
-  // Optional query fields
-  const queryValidators: Record<string, Joi.Schema> = {};
-  for (const field of queryOptional) {
-    if (validations[field]) {
-      queryValidators[field] = validations[field].optional();
-    }
-  }
-  const querySchema = Joi.object(queryValidators);
-  const bodySchema = Joi.object(bodyValidators);
-  const paramsSchema = Joi.object(paramsValidators);
-
-  return (req: any, res: any, next: any) => {
-    console.log('query filed' , queryOptional)
-        console.log(req.query);
-
-    // Validate body
-    const { error: bodyError, value: validatedBody } = bodySchema.validate(
-      req.body,
-      {
-        abortEarly: false,
-        stripUnknown: true,
+    if (!fields) return schema;
+    for (const field of fields) {
+      if (this.validations[field]) {
+        schema[field as string] = isRequired
+          ? this.validations[field].required()
+          : this.validations[field].optional();
+      } else {
+        throw new Error(`Field "${String(field)}" is not defined in validations`);
       }
-    );
+    }
+    return schema;
+  }
+  private validateAndAssign(
+    schema: Joi.ObjectSchema,
+    data: any,
+    targetKey: 'validatedBody' | 'validatedParams' | 'validatedQuery',
+    req: Request,
+  ): string | undefined {
+    const { error, value } = schema.validate(data, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
 
-    if (bodyError) {
-      const messages = bodyError.details.map((d) => d.message).join(', ');
-      return next(new AppError(messages, HttpStatusCode.BadRequest));
+    if (error) {
+      return `${targetKey}: ${error.details.map((d) => d.message).join(', ')}`;
     }
 
-    // Validate params
-    const { error: paramsError, value: validatedParams } =
-      paramsSchema.validate(req.params, {
-        abortEarly: false,
-        stripUnknown: true,
-      });
+    (req as any)[targetKey] = value;
+  }
+}
 
-    if (paramsError) {
-      const messages = paramsError.details.map((d) => d.message).join(', ');
-      return next(new AppError(messages, HttpStatusCode.BadRequest));
-    }
-    // Validate query
-    const { error: queryError, value: validatedQuery } = querySchema.validate(
-      req.query, {abortEarly: false, stripUnknown: true});
-    if (queryError) {
-      const messages = queryError.details.map((d) => d.message).join(', ')
-      return next(new AppError(messages, HttpStatusCode.BadRequest));};
-    // Attach validated data to request
-    req.validatedQuery = validatedQuery;
-    req.validatedBody = validatedBody;
-    req.validatedParams = validatedParams;
+export default validationsUtils;
 
-    next();
-  };
-};
-
-export default createValidationsMiddleware;
