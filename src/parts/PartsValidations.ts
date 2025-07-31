@@ -3,6 +3,7 @@ import { CarType, Category } from '../../types/partsTypes';
 import AppError from '../../utils/AppError';
 import createValidationsMiddleware from '../../utils/validationsUtils';
 import { DATE } from 'sequelize';
+import validationsUtils from '../../utils/validationsUtils';
 
 const PartsFelidsValidation = {
   name: Joi.string()
@@ -41,14 +42,15 @@ const PartsFelidsValidation = {
   brand: Joi.string(),
   country: Joi.string(),
   city: Joi.string(),
-  limit: Joi.number().min(1).max(100).default(10),  
+  limit: Joi.number().min(1).max(100).default(10),
   page: Joi.number().min(1).default(1),
   sort: Joi.string().valid('price', '-price', 'name', '-name').default('price'),
 };
 
-export const addPartValidation = createValidationsMiddleware(
-  PartsFelidsValidation,
-  [
+const partsValidation = new validationsUtils(PartsFelidsValidation);
+export const addPartValidation = partsValidation.createMiddleware({
+
+  requiredBody: [
     'category',
     'price',
     'carType',
@@ -60,12 +62,12 @@ export const addPartValidation = createValidationsMiddleware(
     'city',
     'new',
   ],
-  ['photos', 'stock'],[],[],['sort', 'page', 'limit']
+  optionalBody: ['photos', 'stock'],
+  optionalQuery: ['sort', 'page', 'limit']
+}
 );
-export const updatePartValidation = createValidationsMiddleware(
-  PartsFelidsValidation,
-  [],
-  [
+export const updatePartValidation = partsValidation.createMiddleware({
+  optionalBody: [
     'new',
     'original',
     'photos',
@@ -80,7 +82,7 @@ export const updatePartValidation = createValidationsMiddleware(
     'image',
     'description',
     'price',
-    'quantity',
     'carType',
   ]
+}
 );
