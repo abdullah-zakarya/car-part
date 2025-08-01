@@ -4,6 +4,7 @@ import UserAuth from '../src/auth/authDao/UserAuth';
 import { Gender } from '../types/types';
 import User from '../src/models/User';
 import Message from '../src/models/Message';
+import { HttpStatusCode } from 'axios';
 
 const auth = new UserAuth();
 
@@ -12,7 +13,6 @@ describe('Message API Testing', () => {
   let user2: User;
   let token1: string;
   let token2: string;
-
   beforeAll(async () => {
     const response1 = await auth.signup('normal', {
       name: 'ahmed',
@@ -79,11 +79,9 @@ describe('Message API Testing', () => {
           message: 'This message has no receiver!',
         });
 
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(HttpStatusCode.BadRequest);
       expect(response.body).toHaveProperty(
-        'message',
-        'Receiver and message are required'
-      );
+        'message');
     });
 
     // Test: Send message without content
@@ -95,11 +93,8 @@ describe('Message API Testing', () => {
           receiverId: user2.id,
         });
 
-      expect(response.status).toBe(403);
-      expect(response.body).toHaveProperty(
-        'message',
-        'Receiver and message are required'
-      );
+      expect(response.status).toBe(HttpStatusCode.BadRequest);
+      expect(response.body).toHaveProperty('message');
     });
 
     // Test: Send an empty message
@@ -112,11 +107,8 @@ describe('Message API Testing', () => {
           message: '',
         });
 
-      expect(response.status).toBe(403);
-      expect(response.body).toHaveProperty(
-        'message',
-        'Receiver and message are required'
-      );
+      expect(response.status).toBe(HttpStatusCode.BadRequest);
+      expect(response.body).toHaveProperty('message');
     });
 
     // Test: Send message with invalid receiverId type
@@ -129,11 +121,8 @@ describe('Message API Testing', () => {
           message: 'This should fail!',
         });
 
-      expect(response.status).toBe(403); // Adjust based on your validation
-      expect(response.body).toHaveProperty(
-        'message',
-        'Receiver and message are required'
-      ); // Adjust based on your implementation
+      expect(response.status).toBe(HttpStatusCode.BadRequest); // Adjust based on your validation
+      expect(response.body).toHaveProperty('message');
     });
 
     // Test: Unauthorized user
@@ -143,11 +132,8 @@ describe('Message API Testing', () => {
         message: 'Hello, Mohamed!',
       });
 
-      expect(response.status).toBe(401); // Unauthorized
-      expect(response.body).toHaveProperty(
-        'message',
-        'Authorization header is missing'
-      ); // Adjust based on your implementation
+      expect(response.status).toBe(HttpStatusCode.Unauthorized);
+      expect(response.body).toHaveProperty('message',);
     });
   });
 

@@ -4,6 +4,7 @@ import { Router } from 'express';
 import ChatController from './chatController';
 import isLogin from '../../utils/isLogin';
 import { catchAsync, catchPrams } from '../../utils/catchErrors';
+import { getAllChatsValidation, getOneChatValidation, sendMessageValidation } from './chatValidations';
 
 const router = Router();
 const chatController = new ChatController();
@@ -19,7 +20,7 @@ router.use(isLogin);
  * @body {string} message - The message to send
  * @returns {Object} - The new message object
  */
-router.post('/send', catchAsync(chatController.sendMessage));
+router.post('/send', sendMessageValidation, catchAsync(chatController.sendMessage));
 
 /**
  * @route GET /api/chats/all
@@ -29,7 +30,7 @@ router.post('/send', catchAsync(chatController.sendMessage));
  * @body {number} page - The page number for pagination (default: 1)
  * @returns {Array} - An array of chat objects
  */
-router.get('/all', catchAsync(chatController.getAllChats));
+router.get('/all', getAllChatsValidation, catchAsync(chatController.getAllChats));
 
 /**
  * @route GET /api/chats/:id
@@ -40,7 +41,7 @@ router.get('/all', catchAsync(chatController.getAllChats));
  * @body {number} page - The page number for pagination (default: 1)
  * @returns {Array} - An array of message objects
  */
-router.get('/:id', catchPrams(chatController.getOneChat));
+router.get('/:id', getOneChatValidation, catchPrams(chatController.getOneChat));
 
 const chatRouter = router;
 export default chatRouter;

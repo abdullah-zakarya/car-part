@@ -19,15 +19,16 @@ const authFelidsValidation = {
   userId: Joi.string().max(24).min(1),
 };
 const authValidation = new createValidationsMiddleware(authFelidsValidation);
+
 export const signupValidation = authValidation.createMiddleware({
-  requiredBody:['name', 'email', 'password'],
-  optionalBody:['role', 'gender']
+  requiredBody: ['name', 'email', 'password'],
+  optionalBody: ['role', 'gender']
 }
 );
-export const loginValidation = authValidation.createMiddleware({requiredBody:['email', 'password']});
-export const updateMeValidation =authValidation.createMiddleware({ requiredBody:['name', 'email', 'gender']}
+export const loginValidation = authValidation.createMiddleware({ requiredBody: ['email', 'password'] });
+export const updateMeValidation = authValidation.createMiddleware({ requiredBody: ['name', 'email', 'gender'] }
 );
-export const forgotPasswordValidation =authValidation.createMiddleware({requiredBody:['email']});
+export const forgotPasswordValidation = authValidation.createMiddleware({ requiredBody: ['email'] });
 export const resetPasswordValidation = authValidation.createMiddleware(
-  {requiredBody:['newPassword', 'resetCode', 'email']}
+  { requiredBody: ['newPassword', 'resetCode', 'email'] }
 );

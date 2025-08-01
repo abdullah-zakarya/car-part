@@ -3,25 +3,27 @@ import User from '../src/models/User';
 import ResetCode from '../src/models/ResetCode';
 import bcrypt from 'bcrypt';
 import { Gender } from '../types/types';
+import sequelize from '../config/database';
 
 describe('UserAuth', () => {
   let userAuth: UserAuth;
   let token: string;
   let user: User;
-  let userData  = {
-        name: 'Sara',
-        email: 'sara@example.com',
-        password: 'password123',
-        gender: Gender.female,
-      };
+  let userData = {
+    name: 'Sara',
+    email: 'sara@example.com',
+    password: 'password123',
+    gender: Gender.female,
+  };
 
   beforeAll(async () => {
     userAuth = new UserAuth();
+    await sequelize.sync({ force: true });
     await User.destroy({ where: {} });
     await ResetCode.destroy({ where: {} });
-      const result = await userAuth.signup('normal', userData);
-      user = result.user;
-      token = result.token;
+    const result = await userAuth.signup('normal', userData);
+    user = result.user;
+    token = result.token;
   });
 
   // User Signup Tests
@@ -62,9 +64,9 @@ describe('UserAuth', () => {
       );
     });
     it('should successfully log in with valid credentials', async () => {
-      const {email, password} = userData;
+      const { email, password } = userData;
       const result = await userAuth.login('normal', {
-        email:'sara@example.com',
+        email: 'sara@example.com',
         password: 'password123',
       });
       console.log('result', result);
