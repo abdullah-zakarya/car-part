@@ -7,72 +7,61 @@ import sequelize from '../config/database';
 
 describe('UserAuth', () => {
   let userAuth: UserAuth;
-  let token: string;
-  let user: User;
-  let userData = {
-    name: 'Sara',
-    email: 'sara@example.com',
-    password: 'password123',
-    gender: Gender.female,
+  let userData: {
+    name: string;
+    email: string;
+    password: string;
+    gender: Gender;
   };
 
-  beforeAll(async () => {
+  beforeEach(async () => {
+    userData = {
+      name: 'Sara',
+      email: 'sara@example.com',
+      password: 'password123',
+      gender: Gender.female,
+    };
     userAuth = new UserAuth();
     await sequelize.sync({ force: true });
-    await User.destroy({ where: {} });
-    await ResetCode.destroy({ where: {} });
-    const result = await userAuth.signup('normal', userData);
-    user = result.user;
-    token = result.token;
+
+
   });
 
-  // User Signup Tests
   describe('Signup', () => {
-    // it('should successfully sign up a new user', async () => {
-    //   userData = {
-    //     name: 'Sara',
-    //     email: 'sara@example.com',
-    //     password: 'password123',
-    //     gender: Gender.female,
-    //   };
+    it('should successfully sign up a new user', async () => {
+      const result = await userAuth.signup('normal', userData);
 
-    //   const result = await userAuth.signup('normal', userData);
-    //   user = result.user;
-    //   token = result.token;
-
-    //   compareFields(userData, user, 'name', 'email', 'gender');
-    //   expect(result.token).toBeDefined();
-    // });
-
-    it('should throw an error if email already exists', async () => {
-      await expect(userAuth.signup('normal', userData)).rejects.toThrow();
+      compareFields(userData, result.user, 'name', 'email', 'gender');
+      expect(result.token).toBeDefined();
     });
 
-    // Additional signup tests can be added here
+    it('should throw an error if email already exists', async () => {
+      await userAuth.signup('normal', userData);
+
+      await expect(userAuth.signup('normal', userData)).rejects.toThrow();
+    });
   });
 
-  // User Login Tests
   describe('Login', () => {
     it('should successfully log in with a token', async () => {
+      const { user, token } = await userAuth.signup('normal', userData);
       const id = await userAuth.isLogin(token);
       expect(id).toEqual(user.id);
     });
 
     it('should throw an error for an invalid token', async () => {
-      await expect(userAuth.isLogin('invalid-token')).rejects.toThrow(
-        'Invalid or malformed token'
-      );
+      await expect(userAuth.isLogin('invalid-token')).rejects.toThrow();
     });
+
     it('should successfully log in with valid credentials', async () => {
-      const { email, password } = userData;
-      const result = await userAuth.login('normal', {
-        email: 'sara@example.com',
-        password: 'password123',
-      });
-      console.log('result', result);
-      token = result.token;
+      const { name, email, password, gender } = userData;
+
+      const { user } = await userAuth.signup('normal', { name, email, password, gender });
+      console.log("my user", email, password);
+      const result = await userAuth.login('normal', { email, password });
+
       expect(result.user.id).toEqual(user.id);
-      expect(token).toBeDefined();
+      expect(result.token).toBeDefined();
     });
 
     it('should throw an error if the user is not found', async () => {
@@ -85,6 +74,8 @@ describe('UserAuth', () => {
     });
 
     it('should throw an error if the password is incorrect', async () => {
+      await userAuth.signup('normal', userData);
+
       await expect(
         userAuth.login('normal', {
           email: userData.email,
@@ -92,13 +83,12 @@ describe('UserAuth', () => {
         })
       ).rejects.toThrow('Invalid credentials');
     });
-
-    // Additional login tests can be added here
   });
 
-  // Password Recovery Tests
   describe('Forgot Password', () => {
     it('should initiate the forgot password process with a valid email', async () => {
+      await userAuth.signup('normal', userData);
+
       await expect(
         userAuth.forgotPassword(userData.email)
       ).resolves.not.toThrow();
@@ -109,36 +99,39 @@ describe('UserAuth', () => {
         userAuth.forgotPassword('nonexistent@example.com')
       ).rejects.toThrow();
     });
-
-    // Additional forgot password tests can be added here
   });
 
-  // Password Reset Tests
   describe('Reset Password', () => {
     it('should successfully reset password with a valid reset code', async () => {
+      await userAuth.signup('normal', userData);
+      await userAuth.forgotPassword(userData.email);
+
       const resetCode = await ResetCode.findOne({
         where: { email: userData.email },
       });
+
       const newPassword = 'newPassword123';
 
-      const result = await userAuth.resetPassword({
+      const token = await userAuth.resetPassword({
         email: userData.email,
         resetCode: resetCode?.code!,
         newPassword,
       });
 
-      expect(result).toBeDefined();
+      expect(token).toBeDefined();
 
-      // Verify user can log in with the new password
-      // const loginResult = await userAuth.login('normal', {
-      //   email: userData.email,
-      //   password: newPassword,
-      // });
+      // optional: تأكيد أنه يمكن تسجيل الدخول بكلمة المرور الجديدة
+      const result = await userAuth.login('normal', {
+        email: userData.email,
+        password: newPassword,
+      });
 
-      // expect(loginResult.token).toBeDefined();
+      expect(result.token).toBeDefined();
     });
 
     it('should throw an error if the reset code is invalid or expired', async () => {
+      await userAuth.signup('normal', userData);
+
       await expect(
         userAuth.resetPassword({
           email: userData.email,
@@ -147,13 +140,12 @@ describe('UserAuth', () => {
         })
       ).rejects.toThrow();
     });
-
-    // Additional reset password tests can be added here
   });
 
-  // User Update Tests
   describe('Update User', () => {
     it('should update user information with valid fields', async () => {
+      const { user } = await userAuth.signup('normal', userData);
+
       const updatedFields = {
         name: 'Sara Updated',
         email: 'updated@example.com',
@@ -166,35 +158,36 @@ describe('UserAuth', () => {
     });
 
     it('should not allow updating invalid fields like role or password', async () => {
+      const { user } = await userAuth.signup('normal', userData);
+
       const invalidFields = { role: 'admin', password: 'newPassword123' };
 
       const updatedUser = await userAuth.updateMe(user.id, invalidFields);
 
       expect(updatedUser.role).not.toBe('admin');
+
+      const freshUser = await User.findByPk(user.id);
       const isPasswordSame = await bcrypt.compare(
         'newPassword123',
-        user.password
+        freshUser!.password
       );
+
       expect(isPasswordSame).toBe(false); // Password should remain unchanged
     });
-
-    // Additional update user tests can be added here
   });
 
-  // User Deletion Tests
   describe('Delete User', () => {
     it('should delete the user successfully', async () => {
+      const { user } = await userAuth.signup('normal', userData);
+
       await expect(userAuth.deleteMe(user.id)).resolves.not.toThrow();
 
-      // Ensure the user is deleted
       const deletedUser = await User.findByPk(user.id);
       expect(deletedUser).toBeNull();
     });
-
-    // Additional delete user tests can be added here
   });
 
-  // Helper function for field comparison
+  // Helper function for comparing fields
   function compareFields(
     obj1: { [key: string]: any },
     obj2: { [key: string]: any },

@@ -7,7 +7,7 @@ export default class NormalLogin implements ILoginMethod {
   private async encryptPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
     const result = await bcrypt.hash(password, salt)
-    return result ;
+    return result;
   }
 
   async login({
@@ -19,7 +19,7 @@ export default class NormalLogin implements ILoginMethod {
   }): Promise<User> {
     const user = await User.findOne({ where: { email } });
 
-    if(!user) throw new AppError('Invalid credentials', HttpStatusCode.Forbidden);
+    if (!user) throw new AppError('Invalid credentials', HttpStatusCode.Forbidden);
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new AppError('Invalid credentials', HttpStatusCode.Forbidden);
     return user;

@@ -12,6 +12,7 @@ const isLogin = async (token: string): Promise<number> => {
   return decoded.id;
 };
 
+
 const userSocket: { [userId: number]: string } = {};
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {

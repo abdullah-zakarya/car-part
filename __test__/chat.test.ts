@@ -5,211 +5,174 @@ import { Gender } from '../types/types';
 import User from '../src/models/User';
 import Message from '../src/models/Message';
 import { HttpStatusCode } from 'axios';
+import sequelize from '../config/database';
 
 const auth = new UserAuth();
 
 describe('Message API Testing', () => {
-  let user1: User;
-  let user2: User;
-  let token1: string;
-  let token2: string;
-  beforeAll(async () => {
-    const response1 = await auth.signup('normal', {
-      name: 'ahmed',
-      email: 'ahmed@gmail.com',
-      password: 'password',
-      gender: Gender.male,
-    });
-    user1 = response1.user;
-    token1 = response1.token;
-
-    const response2 = await auth.signup('normal', {
-      name: 'mohamed',
-      email: 'mohamed@gmail.com',
-      password: 'password',
-      gender: Gender.male,
-    });
-    user2 = response2.user;
-    token2 = response2.token;
+  beforeEach(async () => {
+    await sequelize.sync({ force: true });
   });
 
+  const createUserAndToken = async (name: string, email: string) => {
+    const response = await auth.signup('normal', {
+      name,
+      email,
+      password: 'password',
+      gender: Gender.male,
+    });
+    return { user: response.user, token: response.token };
+  };
+
   describe('sendMessage testing', () => {
-    // Test: Send a real message
     it('should send a message to an existing user', async () => {
+      const { user: sender, token: token1 } = await createUserAndToken('ahmed', 'ahmed@gmail.com');
+      const { user: receiver } = await createUserAndToken('mohamed', 'mohamed@gmail.com');
+
       const response = await request(app)
         .post('/api/v1/chat/send')
         .set('Authorization', `Bearer ${token1}`)
         .send({
-          receiverId: user2.id,
+          receiverId: receiver.id,
           message: 'Hello, Mohamed!',
         });
 
       expect(response.status).toBe(200);
-      expect(response.body.message).toHaveProperty('senderId', user1.id);
-      expect(response.body.message).toHaveProperty('receiverId', user2.id);
-      expect(response.body.message).toHaveProperty(
-        'message',
-        'Hello, Mohamed!'
-      );
+      expect(response.body.message).toHaveProperty('senderId', sender.id);
+      expect(response.body.message).toHaveProperty('receiverId', receiver.id);
+      expect(response.body.message).toHaveProperty('message', 'Hello, Mohamed!');
     });
 
-    // Test: Send message to a non-existent user
-    it('should attempt to send a message to a user that does not exist', async () => {
+    it('should return 404 if receiver does not exist', async () => {
+      const { token: token1 } = await createUserAndToken('ahmed', 'ahmed@gmail.com');
+
       const response = await request(app)
         .post('/api/v1/chat/send')
         .set('Authorization', `Bearer ${token1}`)
         .send({
-          receiverId: 9999, // Assuming 9999 is an ID that does not exist
+          receiverId: 9999,
           message: 'This user does not exist!',
         });
 
-      expect(response.body).toHaveProperty(
-        'message',
-        'This user does not exist'
-      );
       expect(response.status).toBe(404);
+      expect(response.body).toHaveProperty('message', 'This user does not exist');
     });
 
-    // Test: Send message without a receiver
-    it('should attempt to send a message without a receiver', async () => {
+    it('should return 400 if receiver is missing', async () => {
+      const { token: token1 } = await createUserAndToken('ahmed', 'ahmed@gmail.com');
+
       const response = await request(app)
         .post('/api/v1/chat/send')
         .set('Authorization', `Bearer ${token1}`)
-        .send({
-          message: 'This message has no receiver!',
-        });
-
-      expect(response.status).toBe(HttpStatusCode.BadRequest);
-      expect(response.body).toHaveProperty(
-        'message');
-    });
-
-    // Test: Send message without content
-    it('should attempt to send a message without content', async () => {
-      const response = await request(app)
-        .post('/api/v1/chat/send')
-        .set('Authorization', `Bearer ${token1}`)
-        .send({
-          receiverId: user2.id,
-        });
+        .send({ message: 'No receiver' });
 
       expect(response.status).toBe(HttpStatusCode.BadRequest);
       expect(response.body).toHaveProperty('message');
     });
 
-    // Test: Send an empty message
-    it('should attempt to send an empty message', async () => {
+    it('should return 400 if message is missing', async () => {
+      const { token: token1, user: receiver } = await createUserAndToken('ahmed', 'ahmed@gmail.com');
+
       const response = await request(app)
         .post('/api/v1/chat/send')
         .set('Authorization', `Bearer ${token1}`)
-        .send({
-          receiverId: user2.id,
-          message: '',
-        });
+        .send({ receiverId: receiver.id });
 
       expect(response.status).toBe(HttpStatusCode.BadRequest);
       expect(response.body).toHaveProperty('message');
     });
 
-    // Test: Send message with invalid receiverId type
-    it('should attempt to send a message with invalid receiverId type', async () => {
+    it('should return 400 if message is empty', async () => {
+      const { token: token1, user: receiver } = await createUserAndToken('ahmed', 'ahmed@gmail.com');
+
       const response = await request(app)
         .post('/api/v1/chat/send')
         .set('Authorization', `Bearer ${token1}`)
-        .send({
-          receiverId: 'invalid-id', // Invalid type
-          message: 'This should fail!',
-        });
+        .send({ receiverId: receiver.id, message: '' });
 
-      expect(response.status).toBe(HttpStatusCode.BadRequest); // Adjust based on your validation
+      expect(response.status).toBe(HttpStatusCode.BadRequest);
       expect(response.body).toHaveProperty('message');
     });
 
-    // Test: Unauthorized user
-    it('should attempt to send a message without authorization', async () => {
-      const response = await request(app).post('/api/v1/chat/send').send({
-        receiverId: user2.id,
-        message: 'Hello, Mohamed!',
-      });
+    it('should return 400 for invalid receiverId type', async () => {
+      const { token: token1 } = await createUserAndToken('ahmed', 'ahmed@gmail.com');
+
+      const response = await request(app)
+        .post('/api/v1/chat/send')
+        .set('Authorization', `Bearer ${token1}`)
+        .send({ receiverId: 'invalid-id', message: 'test' });
+
+      expect(response.status).toBe(HttpStatusCode.BadRequest);
+      expect(response.body).toHaveProperty('message');
+    });
+
+    it('should return 401 without authorization', async () => {
+      const { user: receiver } = await createUserAndToken('mohamed', 'mohamed@gmail.com');
+
+      const response = await request(app)
+        .post('/api/v1/chat/send')
+        .send({ receiverId: receiver.id, message: 'Hello!' });
 
       expect(response.status).toBe(HttpStatusCode.Unauthorized);
-      expect(response.body).toHaveProperty('message',);
+      expect(response.body).toHaveProperty('message');
     });
   });
 
   describe('get all chat testing', () => {
-    const messages: Message[] = [];
-    // beforeAll(async () => {
-    //   for (let i = 0; i < 20; i++) {
-    //     // messages.push(
-    //     //   await Message.create({
-    //     //     senderId: user1.id,
-    //     //     receiverId: user2.id,
-    //     //     message: `hello ${user2.name} message number ${i}`,
-    //     //   })
-    //     // );
+    it('should retrieve all chats for a user', async () => {
+      const { user: user1, token: token1 } = await createUserAndToken('ahmed', 'ahmed@gmail.com');
+      const { user: user2 } = await createUserAndToken('mohamed', 'mohamed@gmail.com');
 
-    //     messages.push(
-    //       await Message.create({
-    //         senderId: user2.id,
-    //         receiverId: user1.id,
-    //         message: `hello ${user1.name} message number ${i}`,
-    //       })
-    //     );
-    //   }
-    // });
+      for (let i = 0; i < 15; i++) {
+        await Message.create({
+          senderId: user2.id,
+          receiverId: user1.id,
+          message: `Message ${i}`,
+        });
+      }
 
-    // Test: Retrieve all chats for a user
-    it('should retrieve all chats for user1', async () => {
       const response = await request(app)
         .get('/api/v1/chat/all')
         .set('Authorization', `Bearer ${token1}`)
-        .send({
-          limit: 10,
-          page: 1,
-        });
+        .query({ limit: 10, page: 1 });
 
       expect(response.status).toBe(200);
       expect(response.body.chats).toBeInstanceOf(Array);
-      expect(response.body.chats.length).toBeLessThanOrEqual(10); // Assuming a maximum of 10 results per page
-    }, 10000);
+      expect(response.body.chats.length).toBeLessThanOrEqual(10);
+    });
 
-    // Test: Retrieve chat between user1 and user2
-    it('should retrieve chat between user1 and user2', async () => {
+    it('should retrieve chat between two users', async () => {
+      const { user: user1, token: token1 } = await createUserAndToken('ahmed', 'ahmed@gmail.com');
+      const { user: user2 } = await createUserAndToken('mohamed', 'mohamed@gmail.com');
+
+      for (let i = 0; i < 10; i++) {
+        await Message.create({
+          senderId: user1.id,
+          receiverId: user2.id,
+          message: `Msg ${i}`,
+        });
+      }
+
       const response = await request(app)
         .get(`/api/v1/chat/${user2.id}`)
         .set('Authorization', `Bearer ${token1}`)
-        .send({
-          limit: 10,
-          page: 1,
-        });
+        .query({ limit: 10, page: 1 });
 
       expect(response.status).toBe(200);
       expect(response.body.messages).toBeInstanceOf(Array);
       expect(response.body.messages.length).toBeLessThanOrEqual(10);
     });
 
-    // Test: Attempt to retrieve chat with non-existent user
-    it('should attempt to retrieve chat with non-existent user', async () => {
-      const response = await request(app)
-        .get(`/api/v1/chat/9999`) // Assuming 9999 is an ID that does not exist
-        .set('Authorization', `Bearer ${token1}`)
-        .send({
-          limit: 10,
-          page: 1,
-        });
+    it('should return 404 if chatting with non-existent user', async () => {
+      const { token: token1 } = await createUserAndToken('ahmed', 'ahmed@gmail.com');
 
-      expect(response.status).toBe(404); // User does not exist
+      const response = await request(app)
+        .get(`/api/v1/chat/9999`)
+        .set('Authorization', `Bearer ${token1}`)
+        .query({ limit: 10, page: 1 });
+
+      expect(response.status).toBe(404);
       expect(response.body).toHaveProperty('message', 'User not found');
     });
-    afterAll(() => {
-      messages.map(async (el) => await el.destroy());
-    });
-  });
-
-  afterAll(async () => {
-    await user1.destroy();
-    await user2.destroy();
   });
 });
-// so we can just take the filters from the search serves

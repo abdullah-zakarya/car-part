@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75.82% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>69/91</span>
+                <span class='fraction'>91/91</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>4/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75.82% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>69/91</span>
+                <span class='fraction'>91/91</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -213,9 +213,9 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -223,25 +223,25 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -304,35 +304,35 @@ class ChatDao {
         type: QueryTypes.SELECT,
       }
     );
-<span class="cstat-no" title="statement not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span>
-<span class="cstat-no" title="statement not covered" >    return lastMessages;</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+&nbsp;
+    return lastMessages;
+  }
 &nbsp;
   /**
    * Retrieves the last 'n' messages from a specific chat between two users.
    * @param obj - Object containing userId1, userId2, limit of messages, and the page number.
    * @returns A promise that resolves to an array of message instances from the specific chat.
    */
-<span class="fstat-no" title="function not covered" >  async getOneChat(obj: {</span>
-<span class="cstat-no" title="statement not covered" >    userId1: number;</span>
-<span class="cstat-no" title="statement not covered" >    userId2: number;</span>
-<span class="cstat-no" title="statement not covered" >    limit: number;</span>
-<span class="cstat-no" title="statement not covered" >    page: number;</span>
-<span class="cstat-no" title="statement not covered" >  }): Promise&lt;Message[]&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    const offset = (obj.page - 1) * obj.limit;</span>
-<span class="cstat-no" title="statement not covered" >    // Query to get messages between two users (userId1 and userId2)</span>
-<span class="cstat-no" title="statement not covered" >    return this.message.findAll({</span>
-<span class="cstat-no" title="statement not covered" >      where: {</span>
-<span class="cstat-no" title="statement not covered" >        [Op.or]: [</span>
-<span class="cstat-no" title="statement not covered" >          { senderId: obj.userId1, receiverId: obj.userId2 },</span>
-<span class="cstat-no" title="statement not covered" >          { senderId: obj.userId2, receiverId: obj.userId1 },</span>
-<span class="cstat-no" title="statement not covered" >        ],</span>
-<span class="cstat-no" title="statement not covered" >      },</span>
-<span class="cstat-no" title="statement not covered" >      order: [['time', 'DESC']],</span>
-<span class="cstat-no" title="statement not covered" >      limit: obj.limit,</span>
-<span class="cstat-no" title="statement not covered" >      offset,</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+  async getOneChat(obj: {
+    userId1: number;
+    userId2: number;
+    limit: number;
+    page: number;
+  }): Promise&lt;Message[]&gt; {
+    const offset = (obj.page - 1) * obj.limit;
+    // Query to get messages between two users (userId1 and userId2)
+    return this.message.findAll({
+      where: {
+        [Op.or]: [
+          { senderId: obj.userId1, receiverId: obj.userId2 },
+          { senderId: obj.userId2, receiverId: obj.userId1 },
+        ],
+      },
+      order: [['time', 'DESC']],
+      limit: obj.limit,
+      offset,
+    });
+  }
 }
 &nbsp;
 export default ChatDao;
@@ -343,7 +343,7 @@ export default ChatDao;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-01T03:02:53.392Z
+                at 2025-08-01T04:58:23.930Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

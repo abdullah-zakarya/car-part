@@ -105,6 +105,8 @@ class PartDao {
     partId: number;
     userId: number;
   }): Promise<void> {
+    const part = await this.model.findByPk(partId);
+    if (!part) throw new AppError('Part not found', 404);
     await Cart.create({ partId, userId });
   }
 

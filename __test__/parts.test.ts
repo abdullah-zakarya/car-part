@@ -1,73 +1,37 @@
 import request from 'supertest';
-import app from '../app'; // Ensure this points to your app setup file
+import app from '../app';
 import UserAuth from '../src/auth/authDao/UserAuth';
 import Part from '../src/models/Part';
 import { Gender } from '../types/types';
 import User from '../src/models/User';
-import {addPartRequest } from '../types/partApi'
+import { addPartRequest } from '../types/partApi';
 import sequelize from '../config/database';
 import { HttpStatusCode } from 'axios';
-import e from 'express';
-const auth = new UserAuth();
 
-// 1.
-// Test for getting a part by its ID:
-// Test with a valid ID.
-// Test with an invalid ID (e.g., non-numeric ID).
-// Test with a non-existent ID.
-// 2.
-// Test for getting all parts:
-// Test without filters, sorting, and pagination.
-// Test with filters.
-// Test with sorting.
-// Test with pagination.
-// Test with invalid filters.
-// 3.
-// Test for adding a new part to the database:
-// Test with valid data.
-// Test with missing required fields.
-// Test with not logged in user.
-// 4.
-// Test for adding a part to the user's cart:
-// Test with a valid part ID and logged in user.
-// Test with an invalid part ID.
-// Test with not logged in user.
-// 5.
-// Test for removing a part from the user's cart:
-// Test with a valid part ID and logged in user.
-// Test with an invalid part ID or non-existent part ID in the cart.
-// Test with not logged in
+const baseUrl = '/api/v1/parts';
 
 describe('Parts API Testing', () => {
-  let user: User;
-  let token: string;
-  let partId: number;
-  let partService :any ;
-  const baseUrl = '/api/v1/parts';
-  beforeAll(async () => {
-    // 1) init 
+  let partService: any;
+  const auth = new UserAuth();
+
+  beforeEach(async () => {
+    await sequelize.sync({ force: true });
     partService = request(app);
-    await sequelize.sync({ force: true }); // Reset the database
-    // wait for database connection
-    
+  });
 
-    // 2) Sign up a user for authenticated routes
-   {
-     const userData = {
-        name: 'Test User',
-        email: 'test@gmail.com', 
-        password : 'password',
-        gender : Gender.male
-    }
-      const response = await auth.signup('normal', userData);
-      user = response.user;
-      token = response.token;
-    }
+  const createUserAndToken = async () => {
+    const userData = {
+      name: 'Test User',
+      email: 'test@gmail.com',
+      password: 'password',
+      gender: Gender.male,
+    };
+    const { user, token } = await auth.signup('normal', userData);
+    return { user, token };
+  };
 
-
-    // 3) add defualt part :
-    {
-      const partData : addPartRequest = {
+  const createPart = async (ownerId: number, princ: number = 500) => {
+    const partData: addPartRequest = {
       category: 'engine',
       price: 500,
       carType: 'Sedan',
@@ -78,30 +42,28 @@ describe('Parts API Testing', () => {
       mainPhoto: 'main_photo_url',
       stock: 10,
       photos: ['photo1_url', 'photo2_url'],
-      owner: user.id,
+      owner: ownerId,
       country: 'Egypt',
-      city: 'Giza'
+      city: 'Giza',
+    };
+    return await Part.create(partData);
+  };
+  const create10Parts = async (ownerId: number) => {
+    for (let i = 0; i < 10; i++) {
+      await createPart(ownerId, i * 100);
     }
-        
-      
-    const part = await Part.create(partData);
-    partId = part.id;
-    
-      }
-    
+  }
 
-  
-    // 
-    // 4) add 10 parts to the database
-   
-    {
-      for (let i = 0; i < 10; i++) {
-        await Part.create({
+  describe('Add Part API Testing', () => {
+    it('should add a part successfully', async () => {
+      const { user, token } = await createUserAndToken();
+
+      const newPartRequestBody: addPartRequest = {
         category: 'engine',
-        price: 100 + i * 100,
-        carType: 'Sedan',
+        price: 500,
+        carType: 'toyota',
         new: true,
-        brand: 'Toyota',
+        brand: 'toyota',
         madeIn: 'Japan',
         year: new Date('2022-01-01'),
         mainPhoto: 'main_photo_url',
@@ -109,48 +71,14 @@ describe('Parts API Testing', () => {
         photos: ['photo1_url', 'photo2_url'],
         owner: user.id,
         country: 'Egypt',
-        city: 'Giza'
-      });
-    }
-      }
-})
-  
-  it('pass this test any way', async () => {
-    expect(true).toBe(true);
-  })
-  describe('Add Part API Testing', () => {
-    /**
-     * This function tests the Add Part API.
-     *
-     * It signs up a user for authenticated routes, then performs several tests to ensure the API functionality.
-     *
-     * @param {User} user - The user object.
-     * @param {string} token - The authentication token for the user.
-     * @param {number} partId - The ID of the part being tested.
-     *
-     * @returns {void} - This function does not return a value.
-     */
-    it('should add a part successfully', async () => {
+        city: 'Giza',
+      };
 
-      const newPartRequestBody : addPartRequest = {
-        category: 'engine',
-        price: 500,
-        carType: 'toyota',
-        new: true,
-        brand: 'toyota',
-        madeIn: 'Japan',
-        year: new Date("2022-01-01"),
-        mainPhoto: 'main_photo_url',
-        stock: 10,
-        photos: ['photo1_url', 'photo2_url'],
-        owner: 0,
-        country: 'Egypt',
-        city: 'Giza'
-      }
-      const response = await partService.post(baseUrl)
+      const response = await partService
+        .post(baseUrl)
         .set('Authorization', `Bearer ${token}`)
         .send(newPartRequestBody);
-      console.log('create a new part response',response.body);
+
       expect(response.status).toBe(201);
       expect(response.body.part).toHaveProperty('id');
       expect(response.body.part).toHaveProperty('category', 'engine');
@@ -158,8 +86,8 @@ describe('Parts API Testing', () => {
       expect(response.body.part).toHaveProperty('owner', user.id);
     });
 
-    // Test: Add a part with missing required fields
-    it('should fail to add a part with missing required fields', async () => {
+    it('should fail with missing required fields', async () => {
+      const { token } = await createUserAndToken();
       const response = await partService
         .post(baseUrl)
         .set('Authorization', `Bearer ${token}`)
@@ -172,50 +100,47 @@ describe('Parts API Testing', () => {
       expect(response.body).toHaveProperty('message');
     });
 
-    // Test: Add a part without authorization
-    it('should fail to add a part without authorization', async () => {
-      const response = await partService
-        .post(baseUrl)
-        .send({
-          category: 'motor',
-          price: 4.5,
-          carType: 'nisan',
-          new: false,
-          brand: 'abouhemmid',
-          madeIn: 'Iraq',
-          year: '2000',
-          mainPhoto: 'urlToTheMainPhoto.com',
-          stock: 3,
-          photos: ['photo1', 'photo2'],
-        });
+    it('should fail without authorization', async () => {
+      const response = await partService.post(baseUrl).send({
+        category: 'motor',
+        price: 4.5,
+        carType: 'nisan',
+        new: false,
+        brand: 'abouhemmid',
+        madeIn: 'Iraq',
+        year: '2000',
+        mainPhoto: 'urlToTheMainPhoto.com',
+        stock: 3,
+        photos: ['photo1', 'photo2'],
+      });
+
       expect(response.status).toBe(HttpStatusCode.Unauthorized);
       expect(response.body).toHaveProperty('message');
     });
   });
 
   describe('Get Part API Testing', () => {
-    // Test: Get a part by ID
     it('should get a part by its ID', async () => {
-      const response = await partService.get(`${baseUrl}/${partId}`).send();
+      const { user } = await createUserAndToken();
+      const part = await createPart(user.id);
+
+      const response = await partService.get(`${baseUrl}/${part.id}`).send();
       expect(response.status).toBe(200);
-      expect(response.body.part).toHaveProperty('id', partId);
+      expect(response.body.part).toHaveProperty('id', part.id);
     });
 
-    // Test: Attempt to get a part with invalid ID
-    it('should fail to get a part with invalid ID', async () => {
-      const response = await partService
-        .get(`${baseUrl}/10109`) // Invalid ID 
-        .send();
-
+    it('should return 404 for invalid ID', async () => {
+      const response = await partService.get(`${baseUrl}/9999`).send();
       expect(response.status).toBe(404);
       expect(response.body).toHaveProperty('message');
     });
-
   });
 
   describe('Get All Parts API Testing', () => {
-    // Test: Get all parts with pagination
     it('should get all parts with pagination', async () => {
+      const { user } = await createUserAndToken();
+
+      await create10Parts(user.id);
       const response = await partService
         .get(baseUrl)
         .query({ limit: 5, page: 1 })
@@ -223,79 +148,65 @@ describe('Parts API Testing', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.parts).toBeInstanceOf(Array);
-      expect(response.body.parts.length).toBeLessThanOrEqual(5); // Assuming pagination limit is 5
+      expect(response.body.parts.length).toBeLessThanOrEqual(5);
     });
 
-    // Test: Get all parts with sorting
-    it('should get all parts sorted by price', async () => {
-      const response = await request(app)
+    it('should sort parts by price', async () => {
+      const { user } = await createUserAndToken();
+      await create10Parts(user.id);
+      const response = await partService
         .get(baseUrl)
         .query({ sort: 'price' })
-        .send();
-      expect(response.status).toBe(200);
       const parts = response.body.parts;
+      expect(response.status).toBe(200);
       expect(parts).toBeInstanceOf(Array);
-      const fristPrice = parts[0].price;
-      const lastPrice = parts[parts.length - 1].price;
-      expect(fristPrice).toBeLessThanOrEqual(lastPrice); // Assuming ascending order
-    });
- 
+      expect(parts[0].price).toBeLessThanOrEqual(parts[parts.length - 1].price);
+
+    }
+    )
+
+
   });
 
+
   describe('Cart API Testing', () => {
-    // Test: Add a part to cart
-    it('should add a part to the cart', async () => {
-      const response = await request(app)
-        .post(`${baseUrl}/${partId}/addToCart`)
+    it('should add and remove part from cart', async () => {
+      const { user, token } = await createUserAndToken();
+      const part = await createPart(user.id);
+
+      const addResponse = await partService
+        .post(`${baseUrl}/${part.id}/addToCart`)
+        .set('Authorization', `Bearer ${token}`)
+        .send();
+      expect(addResponse.status).toBe(HttpStatusCode.Accepted);
+
+      const deleteResponse = await partService
+        .delete(`${baseUrl}/${part.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send();
+      expect(deleteResponse.status).toBe(HttpStatusCode.NoContent);
+    });
+
+    it('should fail to add non-existent part to cart', async () => {
+      const { token } = await createUserAndToken();
+      const response = await partService
+        .post(`${baseUrl}/9999/addToCart`)
         .set('Authorization', `Bearer ${token}`)
         .send();
 
-      expect(response.status).toBe(HttpStatusCode.Accepted);
-    });
-
-    // Test: Remove a part from the cart
-    it('should remove a part from the cart', async () => {
-      const response = await partService
-        .delete(`${baseUrl}/${partId}`)
-        .set('Authorization', `Bearer ${token}`)
-
-
-      expect(response.status).toBe(HttpStatusCode.NoContent);
-    });
-
-    // Test: Add a non-existent part to the cart
-    it('should fail to add a non-existent part to the cart', async () => {
-      const response = await partService
-        .post(`/${baseUrl}/9999/addToCart`) // Non-existent part ID
-        .set('Authorization', `Bearer ${token}`)
-        .send();
-
+      console.log(response.body);
       expect(response.status).toBe(404);
     });
 
-    // Test: Remove a non-existent part from the cart
-    it('should fail to remove a non-existent part from the cart', async () => {
+    it('should fail to remove non-existent part', async () => {
+      const { token } = await createUserAndToken();
       const response = await partService
-        .delete(`${baseUrl}/9999`) // Non-existent part ID
+        .delete(`${baseUrl}/9999`)
         .set('Authorization', `Bearer ${token}`)
-
+        .send();
 
       expect(response.status).toBe(404);
       expect(response.body).toHaveProperty('message');
     });
   });
-  it('it should delete a non-existent part from the cart', async () => {
-    const response = await request(app)
-      .delete(`${baseUrl}/9999`) // Non-existent part ID
-      .set('Authorization', `Bearer ${token}`)
-      .send();
-    expect(response.status).toBe(404);
-  });
-
-  afterAll(async () => {
-    await Part.destroy({where:{}}); // Clean up the added part after tests
-    await User.destroy({where:{}}); // Clean up the user after tests
-    // print validation
-  });
-
 });
