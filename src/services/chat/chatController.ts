@@ -1,16 +1,16 @@
 // src/controllers/chatController.ts
 
-import { ExpressHandler, ExpressHandlerWithParams } from '../../types/types';
+import { ExpressHandler, ExpressHandlerWithParams } from '../../../types/types';
 import ChatDao from './ChatDao/chatDao';
 import {
   sendMessageType,
   getAllChatType,
   getOneChatType,
-} from '../../types/chatApi';
-import AppError from '../../utils/AppError';
-import { sendMessage } from '../../socket';
-import User from '../models/User';
-import { catchAsync, catchError } from '../../utils/catchErrors';
+} from '../../../types/chatApi';
+import AppError from '../../../utils/AppError';
+import { socketServer } from '../../../socket';
+import User from '../../models/User';
+import { catchAsync, catchError } from '../../../utils/catchErrors';
 
 /**
  * ChatController class handles chat-related functionalities including sending messages
@@ -36,7 +36,7 @@ class ChatController {
     const senderId = res.locals.userId;
     const receiver = await User.findByPk(receiverId);
     if (!receiver) return next(new AppError('This user does not exist', 404));
-    sendMessage({ senderId, receiverId, message });
+    socketServer.sendMessage({ senderId, receiverId, message });
     const newMessage = await this.dao.send({
       senderId,
       receiverId,

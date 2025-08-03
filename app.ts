@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import http from 'http';
 import AuthRouter from './src/auth/authRoute';
-import chatRouter from './src/chat/chatRoute';
+import chatRouter from './src/services/chat/chatRoute';
 import errorHandler from './utils/errorHandler';
 import partRoute from './src/parts/partRoute';
 

@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import validationsUtils from '../../utils/validationsUtils';
+import validationsUtils from '../../../utils/validationsUtils';
 
 const chatFieldValidations = {
   message: Joi.string().min(1).max(300),

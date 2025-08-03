@@ -2,8 +2,8 @@
 
 import { Router } from 'express';
 import ChatController from './chatController';
-import isLogin from '../../utils/isLogin';
-import { catchAsync, catchPrams } from '../../utils/catchErrors';
+import isLogin from '../../../utils/isLogin';
+import { catchAsync, catchPrams } from '../../../utils/catchErrors';
 import { getAllChatsValidation, getOneChatValidation, sendMessageValidation } from './chatValidations';
 
 const router = Router();
