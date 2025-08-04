@@ -3,9 +3,9 @@ import app from '../app';
 import UserAuth from '../src/auth/authDao/UserAuth';
 import { Gender } from '../types/types';
 import User from '../src/models/User';
-import Message from '../src/models/Message';
 import { HttpStatusCode } from 'axios';
 import sequelize from '../config/database';
+import Message from '../src/services/chat/MessageModel';
 
 const auth = new UserAuth();
 

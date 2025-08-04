@@ -1,4 +1,4 @@
-import Message from './Message';
+import Message from '../services/chat/MessageModel';
 import Part from './Part';
 import ResetCode from './ResetCode';
 import Sale from './Sale';

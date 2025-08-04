@@ -1,29 +1,30 @@
 // src/controllers/chatController.ts
 
-import { ExpressHandler, ExpressHandlerWithParams } from '../../../types/types';
-import ChatDao from './ChatDao/chatDao';
+import ChatService from './chatService';
 import {
   sendMessageType,
   getAllChatType,
   getOneChatType,
-} from '../../../types/chatApi';
+} from './chatApiTypes';
 import AppError from '../../../utils/AppError';
-import { socketServer } from '../../../socket';
 import User from '../../models/User';
-import { catchAsync, catchError } from '../../../utils/catchErrors';
+import { webSocketClient } from './adapters/webSocketClient';
+import { IWebSocketClient } from './Interfaces/IWebSocketClient';
 
 /**
  * ChatController class handles chat-related functionalities including sending messages
  * and retrieving chat information.
  */
 class ChatController {
-  private dao: ChatDao;
+  private serivce: ChatService;
+  private socketClient: IWebSocketClient;
 
   /**
    * Initializes an instance of ChatController and ChatDao.
    */
   constructor() {
-    this.dao = new ChatDao();
+    this.serivce = new ChatService();
+    this.socketClient = new webSocketClient(); // Use the WebSocket client for sending messages
   }
 
   /**
@@ -36,8 +37,8 @@ class ChatController {
     const senderId = res.locals.userId;
     const receiver = await User.findByPk(receiverId);
     if (!receiver) return next(new AppError('This user does not exist', 404));
-    socketServer.sendMessage({ senderId, receiverId, message });
-    const newMessage = await this.dao.send({
+    this.socketClient.sendMessage({ senderId, receiverId, message });
+    const newMessage = await this.serivce.send({
       senderId,
       receiverId,
       message,
@@ -55,7 +56,7 @@ class ChatController {
   public getAllChats: getAllChatType = async (req, res, next) => {
     const { limit = 10, page = 1 } = req.body;
     const userId = res.locals.userId;
-    const chats = await this.dao.getAllChat({ userId, limit, page });
+    const chats = await this.serivce.getAllChat({ userId, limit, page });
     res.status(200).json({
       chats,
     });
@@ -75,7 +76,7 @@ class ChatController {
 
     const userId1 = res.locals.userId;
     const { limit = 10, page = 1 } = req.body;
-    const messages = await this.dao.getOneChat({
+    const messages = await this.serivce.getOneChat({
       userId1,
       userId2,
       limit,

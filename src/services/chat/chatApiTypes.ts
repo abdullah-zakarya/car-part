@@ -1,7 +1,6 @@
-import User from '../src/models/User';
-import Message from '../src/models/Message';
-import Part from '../src/models/Part';
-import { ExpressHandler, ExpressHandlerWithParams } from './types';
+import Message from './MessageModel';
+import Part from '../../models/Part';
+import { ExpressHandler, ExpressHandlerWithParams } from '../../../types/types';
 
 // User Authentication Types
 

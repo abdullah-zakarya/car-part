@@ -1,7 +1,7 @@
 import { InferAttributes } from 'sequelize';
 import Cart from '../src/models/Cart';
 import Part from '../src/models/Part';
-import { getOnePartResponse } from './chatApi';
+import { getOnePartResponse } from '../src/services/chat/chatApiTypes';
 import { ExpressHandler, ExpressHandlerWithParams } from './types';
 
 export interface filterFields {

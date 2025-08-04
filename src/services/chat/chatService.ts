@@ -1,8 +1,10 @@
-import Message from '../../../models/Message';
-import { Op, QueryTypes, Sequelize } from 'sequelize';
-import sequelize from '../../../../config/database';
-import User from '../../../models/User';
-class ChatDao {
+
+import { Op, QueryTypes } from 'sequelize';
+import sequelize from '../../../config/database';
+import User from '../../models/User';
+import Message from './MessageModel';
+
+class ChatService {
   message: typeof Message;
 
   constructor() {
@@ -88,4 +90,4 @@ class ChatDao {
   }
 }
 
-export default ChatDao;
+export default ChatService;

@@ -1,64 +1,25 @@
-// import { Server as SocketIOServer } from 'socket.io';
-// import jwt from 'jsonwebtoken';
-// import http from 'http';
-// import User from './src/models/User';
-// import Message from './src/models/Message';
-// import app from './app';
-// const isLogin = async (token: string): Promise<number> => {
-//   const decoded = (await jwt.verify(
-//     token,
-//     process.env.JWT_SECRET as string
-//   )) as { id: number };
-//   return decoded.id;
-// };
-
-
-// const userSocket: { [userId: number]: string } = {};
-// const server = http.createServer(app);
-// const io = new SocketIOServer(server, {
-//   cors: {
-//     origin: '*',
-//     methods: ['GET', 'POST'],
-//   },
-// });
-
-// // recorded the users
-// io.on('connection', async (socket) => {
-//   const token: string = socket.handshake.headers.token as string;
-//   if (!token) return socket.emit('Unauthorized', 'No token provided');
-//   const userId: number = await isLogin(token);
-//   const user = await User.findByPk(userId);
-//   if (!user) return socket.emit('Unauthorized', 'Invalid user');
-//   userSocket[userId] = socket.id;
-//   socket.on('disconnect', () => delete userSocket[userId]);
-// });
-
-// const sendMessage = (
-//   msg: Pick<Message, 'senderId' | 'receiverId' | 'message'>
-// ): void => {
-//   const { senderId, receiverId, message } = msg;
-//   const toSocketId = userSocket[receiverId];
-//   if (!toSocketId) return;
-//   io.to(toSocketId).emit('chat-message', {
-//     from: senderId,
-//     message,
-//   });
-// };
-
-// export { sendMessage, server };
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import http, { Server as HTTPServer } from 'http';
 import User from './src/models/User';
-import Message from './src/models/Message';
+import Message from './src/services/chat/MessageModel';
 import app from './app';
-
+Message
 class WebSocketServer {
   private io: SocketIOServer;
   private httpServer: HTTPServer;
   private userSockets: Map<number, string>;
+  private static instance: WebSocketServer;
 
-  constructor() {
+  public static getInstance(server?: HTTPServer): WebSocketServer {
+    if (!WebSocketServer.instance) {
+      if (!server) thrw new Error('Server instance is required to create WebSocketServer');
+      WebSocketServer.instance = new WebSocketServer(server!);
+    }
+    return WebSocketServer.instance;
+  }
+
+  constructor(server: HTTPServer) {
     this.httpServer = http.createServer(app);
     this.io = new SocketIOServer(this.httpServer, {
       cors: {
@@ -127,7 +88,7 @@ class WebSocketServer {
   }
 }
 
-const socketServer = new WebSocketServer();
-const server = socketServer.getServer();
+// const socketServer = new WebSocketServer();
+// const server = socketServer.getServer();
 
-export { socketServer, server };
+export default WebSocketServer; 

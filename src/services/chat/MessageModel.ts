@@ -5,7 +5,7 @@ import {
   Model,
   DataTypes,
 } from 'sequelize';
-import sequelize from '../../config/database';
+import sequelize from '../../../config/database';
 
 class Message extends Model<
   InferAttributes<Message>,
